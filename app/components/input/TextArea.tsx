@@ -13,7 +13,7 @@ const TextArea = ({ label, setValue, value }: Props) => {
         {label}
       </label>
       <textarea
-        className=" bg-slate-100 h-9 outline-slate-300 outline-2 px-2 rounded text-slate-500 text-sm w-full"
+        className=" bg-slate-100  outline-slate-300 outline-2 p-2 rounded text-slate-500 text-sm w-full h-16"
         id={label.toLowerCase()}
         value={value}
         onChange={(e) => setValue(e.target.value)}

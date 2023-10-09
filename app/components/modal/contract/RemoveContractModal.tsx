@@ -4,7 +4,7 @@ interface Props {
   handleClose: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const RemoveModal = ({ handleClose }: Props) => {
+const RemoveContractModal = ({ handleClose }: Props) => {
   return (
     <div className="w-screen h-screen fixed top-0 left-0  bg-slate-200 flex justify-center items-center backdrop-blur bg-opacity-25">
       <form className="w-auto rounded bg-white shadow p-4 flex flex-col gap-4">
@@ -16,7 +16,7 @@ const RemoveModal = ({ handleClose }: Props) => {
         </div>
         <div className="flex h-8 items-center">
           <h2 className="text-slate-500 font-medium text-md">
-            Voulez vous vraiment retirer cet employé
+            Voulez vous vraiment supprimer ce contrat
           </h2>
         </div>
 
@@ -30,7 +30,4 @@ const RemoveModal = ({ handleClose }: Props) => {
   );
 };
 
-const sexe = ["Homme", "Femme"];
-const status = ["Marié", "Célibataire"];
-
-export default RemoveModal;
+export default RemoveContractModal;

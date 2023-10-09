@@ -13,7 +13,7 @@ const InputText = ({ label, setValue, value }: Props) => {
         {label}
       </label>
       <input
-        className=" bg-slate-100 h-9 outline-slate-300 outline-2 w-52 px-2 rounded text-slate-500 text-sm"
+        className=" bg-slate-100 h-9 outline-slate-300 outline-2 w-full px-2 rounded text-slate-500 text-sm"
         type="text"
         id={label.toLowerCase()}
         value={value}
