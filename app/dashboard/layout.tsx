@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   title: "Dashboard",
 };
 
-export default function DashboardTemplate({
+export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;

@@ -1,9 +1,47 @@
+"use client";
 import { AddDocument } from "@/app/components/actionButton/employee/AddDocument";
 import ViewDocument from "@/app/components/actionButton/employee/ViewDocument";
 import ViewEditButton from "@/app/components/actionButton/employee/ViewEditButton";
-import { BiPrinter, BiBookOpen, BiCross } from "react-icons/bi";
+import { BiPrinter, BiCross } from "react-icons/bi";
+import { host } from "@/lib/host";
+import useSWR from "swr";
+import { Employee } from "@/types/api/employee";
+import ContentLoader from "react-content-loader";
+import { useEffect, useState } from "react";
+import Image from "next/image";
+import { AddDocumentType } from "@/app/components/actionButton/employee/AddDocumentType";
 
-const Employee = () => {
+interface Props {
+  params: {
+    id: string;
+  };
+}
+
+const Employee = ({ params: { id } }: Props) => {
+  const [employee, setEmployee] = useState<Employee>();
+  const fetcher = (url: string) => fetch(url).then((r) => r.json());
+  const [hasDocument, setHasDocument] = useState<boolean>(false);
+  const { data, isLoading } = useSWR<Employee>(
+    `${host}/employee/${id}`,
+    fetcher
+  );
+
+  useEffect(() => {
+    setEmployee(data);
+
+    if (
+      data &&
+      (data.Contract?.length >= 1 ||
+        data.Leave?.length >= 1 ||
+        data.Sanction?.length >= 1 ||
+        data.OtherDocument?.length >= 1)
+    ) {
+      setHasDocument(true);
+    }
+  }, [data]);
+
+  console.log(employee);
+
   return (
     <div className="w-full flex flex-col gap-2">
       <div className="flex justify-between border-b bottom-4 pb-4">
@@ -19,130 +57,194 @@ const Employee = () => {
         </div>
       </div>
       <div className="grid grid-cols-2 gap-4">
-        <div className="bg-white shadow p-4 rounded">
-          <div className="flex gap-2">
-            <div className="w-20 h-20 rounded-full bg-slate-300"></div>
-            <div className="flex flex-col gap-1">
-              <div className="flex gap-1">
-                <p className="text-slate-600 uppercase underline">Nom: </p>
-                <p className=" text-slate-500">Komika</p>
+        {isLoading ? (
+          <>
+            <div className="bg-white shadow p-4 rounded">
+              <ContentLoader
+                speed={2}
+                width={400}
+                height={160}
+                viewBox="0 0 400 160"
+                backgroundColor="#f3f3f3"
+                foregroundColor="#ecebeb"
+              >
+                <rect x="48" y="8" rx="3" ry="3" width="100%" height="6" />
+                <rect x="48" y="26" rx="3" ry="3" width="100%" height="6" />
+                <rect x="0" y="56" rx="3" ry="3" width="100%" height="6" />
+                <rect x="0" y="72" rx="3" ry="3" width="100%" height="6" />
+                <rect x="0" y="88" rx="3" ry="3" width="100%" height="6" />
+                <circle cx="20" cy="20" r="20" />
+              </ContentLoader>
+            </div>
+            <div className="bg-white shadow p-4 rounded">
+              <ContentLoader
+                speed={2}
+                width={400}
+                height={160}
+                viewBox="0 0 400 160"
+                backgroundColor="#f3f3f3"
+                foregroundColor="#ecebeb"
+              >
+                <rect x="0" y="8" rx="3" ry="3" width="100%" height="6" />
+                <rect x="0" y="26" rx="3" ry="3" width="100%" height="6" />
+                <rect x="0" y="36" rx="3" ry="3" width="100%" height="6" />
+                <rect x="0" y="56" rx="3" ry="3" width="100%" height="6" />
+                <rect x="0" y="72" rx="3" ry="3" width="100%" height="6" />
+                <rect x="0" y="88" rx="3" ry="3" width="100%" height="6" />
+              </ContentLoader>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="bg-white shadow p-4 rounded">
+              <div className="flex gap-2">
+                <div className="w-20 h-20 rounded-full bg-slate-300 relative">
+                  {employee?.profil && (
+                    <Image
+                      src={"/upload/" + employee.profil}
+                      alt="Image profile"
+                      fill
+                      className="rounded-full object-cover object-center"
+                    />
+                  )}
+                </div>
+                <div className="flex flex-col gap-1">
+                  <div className="flex gap-1">
+                    <p className="text-slate-600 uppercase underline">Nom: </p>
+                    <p className=" text-slate-500">{employee?.lastName}</p>
+                  </div>
+                  <div className="flex gap-1">
+                    <p className="text-slate-600 uppercase underline">
+                      Prénom:{" "}
+                    </p>
+                    <p className=" text-slate-500">{employee?.firstName}</p>
+                  </div>
+                  <div className="flex gap-1">
+                    <p className="text-slate-600 uppercase underline">
+                      Poste:{" "}
+                    </p>
+                    <p className=" text-slate-500">{employee?.post}</p>
+                  </div>
+                </div>
+              </div>
+              <div className="flex flex-col gap-1 mt-2">
+                <div className="flex gap-1 ">
+                  <p className="text-slate-600 uppercase underline">
+                    Nationalité:{" "}
+                  </p>
+                  <p className=" text-slate-500">
+                    {employee?.nationality || "inconnu"}
+                  </p>
+                </div>
+                <div className="flex gap-1 ">
+                  <p className="text-slate-600 uppercase underline">Genre: </p>
+                  <p className=" text-slate-500">{employee?.gender}</p>
+                </div>
+              </div>
+              <div className="flex gap-1 ">
+                <p className="text-slate-600 uppercase underline">Adresse: </p>
+                <p className=" text-slate-500">
+                  {employee?.address || "inconnu"}
+                </p>
               </div>
               <div className="flex gap-1">
-                <p className="text-slate-600 uppercase underline">Prénom: </p>
-                <p className=" text-slate-500">Christopher Orlando</p>
+                <p className="text-slate-600 uppercase underline">
+                  Numéro de téléphone:{" "}
+                </p>
+                <p className=" text-slate-500">
+                  {employee?.phone || "inconnu"}
+                </p>
               </div>
-              <div className="flex gap-1">
-                <p className="text-slate-600 uppercase underline">Poste: </p>
-                <p className=" text-slate-500">Informaticien</p>
+              <div className="flex gap-1  items-end ">
+                <p className="text-slate-600 uppercase underline">
+                  Adresse électronique:{" "}
+                </p>
+                <p className=" text-slate-500">
+                  {employee?.email || "inconnu"}
+                </p>
               </div>
             </div>
-          </div>
-          <div className="flex flex-col gap-1 mt-2">
-            <div className="flex gap-1 ">
-              <p className="text-slate-600 uppercase underline">
-                Nationalité:{" "}
-              </p>
-              <p className=" text-slate-500">Congolais</p>
+            <div className="bg-white shadow p-4 rounded">
+              <div className="flex flex-col gap-1 mt-2">
+                <div className="flex gap-1 ">
+                  <p className="text-slate-600 uppercase underline">
+                    Etat matrimonial:{" "}
+                  </p>
+                  <p className=" text-slate-500">
+                    {employee?.maritalStatus || "inconnu"}
+                  </p>
+                </div>
+                <div className="flex gap-1 ">
+                  <p className="text-slate-600 uppercase underline">
+                    Nombre d'enfant:{" "}
+                  </p>
+                  <p className=" text-slate-500">
+                    {employee?.children || "inconnu"}
+                  </p>
+                </div>
+              </div>
             </div>
-            <div className="flex gap-1 ">
-              <p className="text-slate-600 uppercase underline">Genre: </p>
-              <p className=" text-slate-500">Masculin</p>
-            </div>
-          </div>
-          <div className="flex gap-1 ">
-            <p className="text-slate-600 uppercase underline">Adresse: </p>
-            <p className=" text-slate-500">
-              {" "}
-              Centre-ville, avenue 2 Jean Jack Adenis, Pointe-Noire
-            </p>
-          </div>
-          <div className="flex gap-1 ">
-            <p className="text-slate-600 uppercase underline">
-              Numéro de téléphone:{" "}
-            </p>
-            <p className=" text-slate-500">05 575 16 25 / 06 919 90 87</p>
-          </div>
-          <div className="flex gap-1 ">
-            <p className="text-slate-600 uppercase underline">
-              Adresse électronique:{" "}
-            </p>
-            <p className=" text-slate-500">christkomika7@gmail.com</p>
-          </div>
-        </div>
-        <div className="bg-white shadow p-4 rounded">
-          <div className="flex flex-col gap-1 mt-2">
-            <div className="flex gap-1 ">
-              <p className="text-slate-600 uppercase underline">
-                Etat matrimonial:{" "}
-              </p>
-              <p className=" text-slate-500">Célibataire</p>
-            </div>
-            <div className="flex gap-1 ">
-              <p className="text-slate-600 uppercase underline">
-                Nombre d'enfant:{" "}
-              </p>
-              <p className=" text-slate-500">0</p>
-            </div>
-          </div>
-        </div>
+          </>
+        )}
       </div>
       <div className="flex justify-between py-4">
-        <h2 className="font-bold text-xl text-slate-600">AUTRE INFORMATION</h2>
-        <div className="flex gap-2">
-          <AddDocument />
-        </div>
+        {isLoading ? (
+          <ContentLoader
+            speed={2}
+            width={400}
+            height={20}
+            backgroundColor="#f3f3f3"
+            foregroundColor="#ecebeb"
+          >
+            <rect x="0" y="0" rx="3" ry="3" width="100%" height="20" />
+          </ContentLoader>
+        ) : (
+          <>
+            <h2 className="font-bold text-xl text-slate-600">
+              AUTRE INFORMATION
+            </h2>
+            <div className="flex gap-2">
+              <AddDocumentType />
+              {employee?.id && <AddDocument id={employee.id} />}
+            </div>
+          </>
+        )}
       </div>
-      <div className="bg-white shadow p-4 rounded flex flex-col gap-2">
-        <div className="flex gap-2 items-center">
-          <p className="text-slate-600 uppercase ">Assurance Maladie (6)</p>
-          <ViewDocument />
-          <span className="p-2 rounded-full bg-red-100 text-red-600 rotate-45 cursor-pointer">
-            <BiCross size={15} />
-          </span>
+      {isLoading && (
+        <div className="bg-white shadow p-4 rounded flex flex-col gap-2">
+          <ContentLoader
+            speed={2}
+            width={400}
+            height={160}
+            viewBox="0 0 400 160"
+            backgroundColor="#f3f3f3"
+            foregroundColor="#ecebeb"
+          >
+            <rect x="0" y="0" rx="3" ry="3" width="100%" height="6" />
+            <rect x="0" y="16" rx="3" ry="3" width="100%" height="6" />
+            <rect x="0" y="36" rx="3" ry="3" width="100%" height="6" />
+            <rect x="0" y="56" rx="3" ry="3" width="100%" height="6" />
+            <rect x="0" y="76" rx="3" ry="3" width="100%" height="6" />
+            <rect x="0" y="96" rx="3" ry="3" width="100%" height="6" />
+            <rect x="0" y="116" rx="3" ry="3" width="100%" height="6" />
+            <rect x="0" y="136" rx="3" ry="3" width="100%" height="6" />
+            <rect x="0" y="156" rx="3" ry="3" width="100%" height="6" />
+            <rect x="0" y="176" rx="3" ry="3" width="100%" height="6" />
+            <rect x="0" y="196" rx="3" ry="3" width="100%" height="6" />
+          </ContentLoader>
         </div>
-        <div className="flex gap-2 items-center">
-          <p className="text-slate-600 uppercase ">CV (1)</p>
-          <ViewDocument />
-          <span className="p-2 rounded-full bg-red-100 text-red-600 rotate-45 cursor-pointer">
-            <BiCross size={15} />
-          </span>
+      )}
+      {employee && hasDocument && (
+        <div className="bg-white shadow p-4 rounded flex flex-col gap-2 h-full">
+          {/* OTHER DOCUMENT */}
+          <div className="flex gap-2 items-center">
+            <p className="text-slate-600 uppercase">
+              {employee.OtherDocument[0].OtherDocumentType[0].name}
+            </p>
+            <ViewDocument doc={employee.OtherDocument} />
+          </div>
         </div>
-        <div className="flex gap-2 items-center">
-          <p className="text-slate-600 uppercase ">Lettre de motivation (1)</p>
-          <ViewDocument />
-          <span className="p-2 rounded-full bg-red-100 text-red-600 rotate-45 cursor-pointer">
-            <BiCross size={15} />
-          </span>
-        </div>
-        <div className="flex gap-2 items-center">
-          <p className="text-slate-600 uppercase ">Contrat (8)</p>
-          <ViewDocument />
-          <span className="p-2 rounded-full bg-red-100 text-red-600 rotate-45 cursor-pointer">
-            <BiCross size={15} />
-          </span>
-        </div>
-        <div className="flex gap-2 items-center">
-          <p className="text-slate-600 uppercase ">Assurance (6)</p>
-          <ViewDocument />
-          <span className="p-2 rounded-full bg-red-100 text-red-600 rotate-45 cursor-pointer">
-            <BiCross size={15} />
-          </span>
-        </div>
-        <div className="flex gap-2 items-center">
-          <p className="text-slate-600 uppercase ">Bulletins de paie (12)</p>
-          <ViewDocument />
-          <span className="p-2 rounded-full bg-red-100 text-red-600 rotate-45 cursor-pointer">
-            <BiCross size={15} />
-          </span>
-        </div>
-        <div className="flex gap-2 items-center">
-          <p className="text-slate-600 uppercase ">Sanction (6)</p>
-          <ViewDocument />
-          <span className="p-2 rounded-full bg-red-100 text-red-600 rotate-45 cursor-pointer">
-            <BiCross size={15} />
-          </span>
-        </div>
-      </div>
+      )}
     </div>
   );
 };

@@ -17,13 +17,16 @@ const SelectLabel = ({ data, label, value, setValue }: Props) => {
         className=" bg-slate-100 h-9 outline-slate-300 outline-2 w-full px-2 rounded text-slate-500 text-sm"
         id={label.toLocaleLowerCase()}
         onChange={(e) => setValue(e.target.value)}
+        value={value}
       >
+        <option className="text-slate-500 text-sm" value={"inconnu"}>
+          Selectionner une option
+        </option>
         {data.map((option) => (
           <option
             className="text-slate-500 text-sm"
             value={option}
             key={option.toLowerCase()}
-            selected={value === option}
           >
             {option}
           </option>

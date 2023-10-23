@@ -1,11 +1,18 @@
+import { Employee } from "@/types/api/employee";
 import RemoveEmployee from "../actionButton/employee/RemoveEmployee";
 import ViewEmployee from "../actionButton/employee/ViewEmployee";
 import State from "../state/State";
+import { cut } from "@/helpers/helpers";
+import Image from "next/image";
 
-const EmployeTable = () => {
+interface Props {
+  data: Employee[];
+}
+
+const EmployeTable = ({ data }: Props) => {
   return (
-    <table className=" table-auto w-full border-spacing-2 bg-slate-100 ">
-      <thead className="bg-white h-14 rounded text-slate-600 font-normal">
+    <table className=" table-auto w-full border-spacing-2 bg-slate-100 mb-5">
+      <thead className="bg-white h-14 rounded text-slate-600 font-normal sticky top-[272px] shadow">
         <tr>
           <th className="align-middle">ID</th>
           <th className="align-middle">Image</th>
@@ -19,50 +26,62 @@ const EmployeTable = () => {
         </tr>
       </thead>
       <tbody>
-        <tr className="h-12 text-gray-700 text-sm bg-blue-200">
-          <td className="text-center ">1</td>
-          <td className="text-center">
-            <div className="w-9 h-9 rounded-full bg-slate-100 m-auto"></div>
-          </td>
-          <td className="text-center">Komika Christopher</td>
-          <td className="text-center">05 575 16 25</td>
-          <td className="text-center">CDD</td>
-          <td className="text-center">
-            <State color="blue" label="Aucun" />
-          </td>
-          <td className="text-center">
-            <State color="red" label="En cour" />
-          </td>
-          <td className="text-center">27/09/2023</td>
-          <td className="text-center">
-            <div className="flex justify-center gap-2">
-              <ViewEmployee />
-              <RemoveEmployee />
-            </div>
-          </td>
-        </tr>
-        <tr className="h-12 text-gray-700 text-sm bg-white">
-          <td className="text-center ">1</td>
-          <td className="text-center">
-            <div className="w-9 h-9 rounded-full bg-slate-100 m-auto"></div>
-          </td>
-          <td className="text-center">Komika Christopher</td>
-          <td className="text-center">05 575 16 25</td>
-          <td className="text-center">CDD</td>
-          <td className="text-center">
-            <State color="blue" label="Aucun" />
-          </td>
-          <td className="text-center">
-            <State color="red" label="En cour" />
-          </td>
-          <td className="text-center">27/09/2023</td>
-          <td className="text-center">
-            <div className="flex justify-center gap-2">
-              <ViewEmployee />
-              <RemoveEmployee />
-            </div>
-          </td>
-        </tr>
+        {data.map((employee, index) => (
+          <tr
+            className={`h-12 text-gray-700 text-sm bg-${
+              index % 2 === 0 ? "blue-200" : "white"
+            }  `}
+          >
+            <td className="text-center ">{index + 1}</td>
+            <td className="text-center ">
+              {employee.profil ? (
+                <div className="w-9 h-9 rounded-full m-auto relative ">
+                  <Image
+                    src={"/upload/" + employee.profil}
+                    fill
+                    alt={`Profil image ${employee.firstName} ${employee.lastName}`}
+                    className="object-cover rounded-full mx-auto "
+                  />
+                </div>
+              ) : (
+                <div className="w-9 h-9 rounded-full bg-slate-100 m-auto"></div>
+              )}
+            </td>
+            <td className="text-center">
+              {cut(`${employee.lastName} ${employee.firstName}`, 20)}
+            </td>
+            <td className="text-center">{employee.phone}</td>
+            <td className="text-center">
+              {employee.Contract.length >= 1 ? employee.Contract[0].type : "-"}
+            </td>
+            <td className="text-center">
+              {employee.Leave.length >= 1 ? (
+                <State color="blue" label={employee.Leave[0].status} />
+              ) : (
+                "-"
+              )}
+            </td>
+            <td className="text-center">
+              {employee.Sanction.length >= 1 ? (
+                <State color="blue" label={employee.Sanction[0].status} />
+              ) : (
+                "-"
+              )}
+            </td>
+            <td className="text-center">
+              {new Date(employee.createdAt).toLocaleDateString()}
+            </td>
+            <td className="text-center">
+              <div className="flex justify-center gap-2">
+                <ViewEmployee id={employee.id} />
+                <RemoveEmployee
+                  id={employee.id}
+                  employee={`${employee.lastName} ${employee.firstName}`}
+                />
+              </div>
+            </td>
+          </tr>
+        ))}
       </tbody>
     </table>
   );

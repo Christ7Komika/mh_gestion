@@ -16,6 +16,9 @@ const config: Config = {
       gridTemplateColumns: {
         layout: "250px 1fr",
       },
+      zIndex: {
+        full: "9999",
+      },
     },
   },
   plugins: [],

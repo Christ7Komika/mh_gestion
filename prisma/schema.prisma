@@ -11,10 +11,11 @@ datasource db {
 }
 
 model Employee {
-  id            String     @id @default(uuid())
+  id            String          @id @default(uuid())
   firstName     String
   lastName      String
   nationality   String?
+  profil        String?
   gender        String
   age           Int?
   address       String?
@@ -24,66 +25,97 @@ model Employee {
   children      Int?
   post          String
   Contract      Contract[]
-  updatedAt     DateTime   @updatedAt
-  createdAt     DateTime   @default(now())
-  leave         leave[]
+  Leave         Leave[]
   Sanction      Sanction[]
+  PayDayAdvance PayDayAdvance[]
+  PaySlip       PaySlip[]
+  updatedAt     DateTime        @updatedAt
+  createdAt     DateTime        @default(now())
+  OtherDocument OtherDocument[]
 }
 
 model Contract {
-  id         String   @id @default(uuid())
-  name       String
+  id         String    @id @default(uuid())
   file       String
+  status     Boolean?  @default(false)
   type       String
   startDate  String
   endDate    String
-  employee   Employee @relation(fields: [employeeId], references: [id])
-  employeeId String
-  updatedAt  DateTime @updatedAt
-  createdAt  DateTime @default(now())
+  employee   Employee? @relation(fields: [employeeId], references: [id])
+  employeeId String?
+  updatedAt  DateTime  @updatedAt
+  createdAt  DateTime  @default(now())
 }
 
-model leave {
-  id         String   @id @default(uuid())
-  name       String
+model Leave {
+  id         String    @id @default(uuid())
+  status     Boolean?  @default(false)
   file       String?
-  startDate  DateTime
-  endDate    DateTime
+  startDate  String
+  endDate    String
   motif      String?
-  employee   Employee @relation(fields: [employeeId], references: [id])
-  updatedAt  DateTime @updatedAt
-  createdAt  DateTime @default(now())
-  employeeId String
+  employee   Employee? @relation(fields: [employeeId], references: [id])
+  employeeId String?
+  updatedAt  DateTime  @updatedAt
+  createdAt  DateTime  @default(now())
 }
 
 model Sanction {
-  id         String   @id @default(uuid())
-  name       String
+  id         String    @id @default(uuid())
+  status     Boolean?  @default(false)
   file       String?
   type       String
   startDate  String
   endDate    String
-  employee   Employee @relation(fields: [employeeId], references: [id])
-  employeeId String
-  updatedAt  DateTime @updatedAt
-  createdAt  DateTime @default(now())
+  employee   Employee? @relation(fields: [employeeId], references: [id])
+  employeeId String?
+  updatedAt  DateTime  @updatedAt
+  createdAt  DateTime  @default(now())
 }
 
 model PaySlip {
-  id           String   @id @default(uuid())
-  name         String
+  id           String    @id @default(uuid())
   salary       String
   file         String?
   payementDate DateTime
   comment      String?
-  updatedAt    DateTime @updatedAt
-  createdAt    DateTime @default(now())
+  employee     Employee? @relation(fields: [employeeId], references: [id])
+  employeeId   String?
+  updatedAt    DateTime  @updatedAt
+  createdAt    DateTime  @default(now())
 }
 
 model PayDayAdvance {
-  id        String   @id @default(uuid())
-  updatedAt DateTime @updatedAt
-  createdAt DateTime @default(now())
+  id           String    @id @default(uuid())
+  value        String
+  file         String?
+  payementDate DateTime
+  motif        String?
+  employee     Employee? @relation(fields: [employeeId], references: [id])
+  employeeId   String?
+  updatedAt    DateTime  @updatedAt
+  createdAt    DateTime  @default(now())
+}
+
+model OtherDocument {
+  id                String              @id @default(uuid())
+  document          String
+  isExpired         Boolean?            @default(false)
+  comment           String?
+  startDate         String?
+  endDate           String?
+  employee          Employee            @relation(fields: [employeeId], references: [id])
+  employeeId        String
+  updatedAt         DateTime            @updatedAt
+  createdAt         DateTime            @default(now())
+  OtherDocumentType OtherDocumentType[]
+}
+
+model OtherDocumentType {
+  id              String         @id @default(uuid())
+  name            String         @unique
+  otherDocument   OtherDocument? @relation(fields: [otherDocumentId], references: [id])
+  otherDocumentId String?
 }
 
 model User {
