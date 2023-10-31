@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { useState } from "react";
 import { RxEyeOpen, RxEyeNone } from "react-icons/rx";
 
@@ -39,9 +40,12 @@ export default function Home() {
             </span>
           </div>
         </div>
-        <button className="w-full h-11 rounded color-blue mt-2 text-white">
+        <Link
+          className="w-full h-11 rounded color-blue mt-2 text-white cursor-pointer flex justify-center items-center"
+          href="/dashboard/employee"
+        >
           Se connecter
-        </button>
+        </Link>
       </form>
       <div className="flex justify-between items-center p-4 gap-2 w-96 custum-shadow rounded-lg bg-white">
         <p className="text-red-400 text-sm">
