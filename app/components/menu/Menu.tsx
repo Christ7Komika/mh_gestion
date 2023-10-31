@@ -57,18 +57,18 @@ const datas = [
     url: "/dashboard/payslip",
     secure: false,
   },
-  {
-    id: 6,
-    name: "Avance sur salaire",
-    url: "/dashboard/payday-advance",
-    secure: false,
-  },
-  {
-    id: 7,
-    name: "Utilisateur",
-    url: "/dashboard/user",
-    secure: false,
-  },
+  // {
+  //   id: 6,
+  //   name: "Avance sur salaire",
+  //   url: "/dashboard/payday-advance",
+  //   secure: false,
+  // },
+  // {
+  //   id: 7,
+  //   name: "Utilisateur",
+  //   url: "/dashboard/user",
+  //   secure: false,
+  // },
 ];
 
 export default Menu;

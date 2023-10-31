@@ -50,10 +50,10 @@ model Contract {
 model Leave {
   id         String    @id @default(uuid())
   status     Boolean?  @default(false)
-  file       String?
-  startDate  String
-  endDate    String
   motif      String?
+  file       String?
+  startDate  String?
+  endDate    String?
   employee   Employee? @relation(fields: [employeeId], references: [id])
   employeeId String?
   updatedAt  DateTime  @updatedAt
@@ -63,10 +63,10 @@ model Leave {
 model Sanction {
   id         String    @id @default(uuid())
   status     Boolean?  @default(false)
+  motif      String?
   file       String?
-  type       String
-  startDate  String
-  endDate    String
+  startDate  String?
+  endDate    String?
   employee   Employee? @relation(fields: [employeeId], references: [id])
   employeeId String?
   updatedAt  DateTime  @updatedAt
@@ -98,24 +98,24 @@ model PayDayAdvance {
 }
 
 model OtherDocument {
-  id                String              @id @default(uuid())
-  document          String
-  isExpired         Boolean?            @default(false)
-  comment           String?
-  startDate         String?
-  endDate           String?
-  employee          Employee            @relation(fields: [employeeId], references: [id])
-  employeeId        String
-  updatedAt         DateTime            @updatedAt
-  createdAt         DateTime            @default(now())
-  OtherDocumentType OtherDocumentType[]
+  id                  String            @id @default(uuid())
+  document            String
+  isExpired           Boolean?          @default(false)
+  comment             String?
+  startDate           String?
+  endDate             String?
+  employee            Employee          @relation(fields: [employeeId], references: [id])
+  employeeId          String
+  updatedAt           DateTime          @updatedAt
+  createdAt           DateTime          @default(now())
+  otherDocumentType   OtherDocumentType @relation(fields: [otherDocumentTypeId], references: [id])
+  otherDocumentTypeId String
 }
 
 model OtherDocumentType {
-  id              String         @id @default(uuid())
-  name            String         @unique
-  otherDocument   OtherDocument? @relation(fields: [otherDocumentId], references: [id])
-  otherDocumentId String?
+  id            String          @id @default(uuid())
+  name          String          @unique
+  OtherDocument OtherDocument[]
 }
 
 model User {

@@ -1,14 +1,14 @@
 "use client";
 import { useState } from "react";
-import EditContractModal from "../../modal/contract/EditContractModal";
+import EditSectionModal from "../../modal/sanction/EditSanctionModal";
 
-type Props = { id: number };
+type Props = { id: string };
 
-const EditSanctionAction = () => {
+const EditSanctionAction = ({ id }: Props) => {
   const [open, setOpen] = useState(false);
   return (
     <>
-      {open && <EditContractModal handleClose={setOpen} />}
+      {open && <EditSectionModal handleClose={setOpen} idSanction={id} />}
       <span
         className="h-4 w-4 rounded-full bg-blue-500 block cursor-pointer"
         onClick={() => setOpen(!open)}

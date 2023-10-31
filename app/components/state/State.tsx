@@ -6,7 +6,7 @@ interface Props {
 const State = ({ label, color }: Props) => {
   return (
     <div
-      className={`px-4 py-2 rounded-full flex justify-center items-center ${
+      className={`px-3 py-2 rounded-full flex justify-center items-center  ${
         color === "red" ? "bg-red-200" : "bg-emerald-300"
       }`}
     >

@@ -3,8 +3,6 @@ import { useState } from "react";
 import { FaUserPlus } from "react-icons/fa";
 import AddSanctionModal from "../../modal/sanction/AddSanctionModal";
 
-type Props = { id: number };
-
 const AddSanctionAction = () => {
   const [open, setOpen] = useState(false);
   return (

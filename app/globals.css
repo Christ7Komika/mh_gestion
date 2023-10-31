@@ -31,3 +31,19 @@ body {
 .top-300 {
   top: 272px;
 }
+
+/* Cacher la barre de défilement */
+::-webkit-scrollbar {
+  width: 0.4em;
+}
+
+/* Barre de défilement elle-même */
+::-webkit-scrollbar-thumb {
+  background-color: #555555;
+  border-radius: 0.12em;
+}
+
+/* Track (arrière-plan de la barre de défilement) */
+::-webkit-scrollbar-track {
+  background: transparent;
+}

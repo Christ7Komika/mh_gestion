@@ -13,12 +13,13 @@ export type Employee = {
   children?: number;
   post?: string;
   OtherDocument: {
+    id: string;
     document: string;
     isExpired: boolean;
     comment: string;
     startDate: string;
     endDate: string;
-    OtherDocumentType: { name: string }[];
+    otherDocumentType: { name: string };
     createdAt: string;
   }[];
   Contract: {
@@ -46,6 +47,20 @@ export type PostEmployee = {
   maritalStatus?: string;
   children?: number;
   post: string;
+};
+export type UpdateEmployee = {
+  firstName?: string;
+  lastName?: string;
+  nationality?: string;
+  profil?: string;
+  gender: string;
+  age?: number;
+  address?: string;
+  phone?: string;
+  email?: string;
+  maritalStatus?: string;
+  children?: number;
+  post?: string;
 };
 
 export type GetEmployees = {

@@ -10,6 +10,7 @@ import ContentLoader from "react-content-loader";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { AddDocumentType } from "@/app/components/actionButton/employee/AddDocumentType";
+import EmployeeProfil from "@/app/components/actionButton/employee/EmployeeProfil";
 
 interface Props {
   params: {
@@ -21,7 +22,7 @@ const Employee = ({ params: { id } }: Props) => {
   const [employee, setEmployee] = useState<Employee>();
   const fetcher = (url: string) => fetch(url).then((r) => r.json());
   const [hasDocument, setHasDocument] = useState<boolean>(false);
-  const { data, isLoading } = useSWR<Employee>(
+  const { data, isLoading, mutate } = useSWR<Employee>(
     `${host}/employee/${id}`,
     fetcher
   );
@@ -40,22 +41,40 @@ const Employee = ({ params: { id } }: Props) => {
     }
   }, [data]);
 
-  console.log(employee);
-
   return (
     <div className="w-full flex flex-col gap-2">
+      {/* HEADER */}
       <div className="flex justify-between border-b bottom-4 pb-4">
         <h2 className="font-bold text-xl text-slate-600">
           INFORMATION EMPLOYÉ
         </h2>
         <div className="flex gap-2">
-          <ViewEditButton />
-          <button className="flex gap-2 border border-slate-600 rounded w-32 h-9 items-center justify-center text-slate-500 hover:bg-slate-100 transition-all">
-            Imprimer
-            <BiPrinter size={15} />
-          </button>
+          {isLoading ? (
+            <ContentLoader
+              speed={2}
+              width={400}
+              height={20}
+              backgroundColor="#f3f3f3"
+              foregroundColor="#ecebeb"
+            >
+              <rect x="0" y="0" rx="3" ry="3" width="100%" height="20" />
+            </ContentLoader>
+          ) : (
+            <>
+              <ViewEditButton employee={employee as Employee} mutate={mutate} />
+              <button className="flex gap-2 border border-slate-600 rounded w-32 h-9 items-center justify-center text-slate-500 hover:bg-slate-100 transition-all">
+                Imprimer
+                <BiPrinter size={15} />
+              </button>
+            </>
+          )}
         </div>
       </div>
+      {/* HEADER */}
+
+      {/* USER PROFIL */}
+
+      {/* SECTION ONE */}
       <div className="grid grid-cols-2 gap-4">
         {isLoading ? (
           <>
@@ -99,12 +118,11 @@ const Employee = ({ params: { id } }: Props) => {
             <div className="bg-white shadow p-4 rounded">
               <div className="flex gap-2">
                 <div className="w-20 h-20 rounded-full bg-slate-300 relative">
-                  {employee?.profil && (
-                    <Image
-                      src={"/upload/" + employee.profil}
-                      alt="Image profile"
-                      fill
-                      className="rounded-full object-cover object-center"
+                  {employee?.id && (
+                    <EmployeeProfil
+                      profil={employee?.profil}
+                      id={employee.id}
+                      mutate={mutate}
                     />
                   )}
                 </div>
@@ -187,6 +205,9 @@ const Employee = ({ params: { id } }: Props) => {
           </>
         )}
       </div>
+      {/* SECTION ONE */}
+
+      {/* DOCUMENT ACTION */}
       <div className="flex justify-between py-4">
         {isLoading ? (
           <ContentLoader
@@ -210,6 +231,9 @@ const Employee = ({ params: { id } }: Props) => {
           </>
         )}
       </div>
+      {/*  DOCUMENT ACTION */}
+
+      {/* SECTION TWO */}
       {isLoading && (
         <div className="bg-white shadow p-4 rounded flex flex-col gap-2">
           <ContentLoader
@@ -239,12 +263,15 @@ const Employee = ({ params: { id } }: Props) => {
           {/* OTHER DOCUMENT */}
           <div className="flex gap-2 items-center">
             <p className="text-slate-600 uppercase">
-              {employee.OtherDocument[0].OtherDocumentType[0].name}
+              {employee.OtherDocument[0].otherDocumentType.name}
             </p>
-            <ViewDocument doc={employee.OtherDocument} />
+            <ViewDocument doc={employee.OtherDocument} mutate={mutate} />
           </div>
         </div>
       )}
+      {/* SECTION TWO */}
+
+      {/* USER PROFIL */}
     </div>
   );
 };

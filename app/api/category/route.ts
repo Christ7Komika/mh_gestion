@@ -2,7 +2,11 @@ import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
 export async function GET() {
-  return NextResponse.json(await prisma.otherDocumentType.findMany());
+  return NextResponse.json(
+    await prisma.otherDocumentType.findMany({
+      include: { OtherDocument: true },
+    })
+  );
 }
 
 export async function POST(req: Request) {

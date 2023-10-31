@@ -1,26 +1,101 @@
 "use client";
-
-import React, { useState } from "react";
-import InputText from "../../input/InputText";
+import React, { useEffect, useState } from "react";
 import SelectLabel from "../../input/SelectLabel";
 import InputDateTime from "../../input/InputDateTime";
 import InputFile from "../../input/InputFile";
 import TextArea from "../../input/TextArea";
+import useSWR from "swr";
+import { host } from "@/lib/host";
+import LoaderSpinner from "../../loader/LoaderSpinner";
+import { EmployeeName } from "@/types/employee";
+import toast, { Toaster } from "react-hot-toast";
 
 interface Props {
   handleClose: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const AddLeaveModal = ({ handleClose }: Props) => {
-  const [name, setName] = useState<string>("");
   const [file, setFile] = useState<File | null>(null);
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
   const [motif, setMotif] = useState<string>("");
   const [employee, setEmployee] = useState<string>("");
+  const [isLoad, setIsLoad] = useState<boolean>(false);
+  const fetcher = (url: string) => fetch(url).then((res) => res.json());
+  const { data, isLoading } = useSWR<EmployeeName>(`${host}/employee`, fetcher);
+  const [nameList, setNameList] = useState<string[]>([]);
+  const [id, setId] = useState<string>("");
+  const { mutate } = useSWR(`${host}/leave`);
+
+  useEffect(() => {
+    if (data)
+      setNameList([
+        ...data.employees.map(
+          (employeeValue) =>
+            `${employeeValue.firstName} ${employeeValue.lastName}`
+        ),
+      ]);
+  }, [data]);
+
+  useEffect(() => {
+    if (employee === "inconnu") {
+      setId("");
+    }
+    if (data && employee !== "inconnu") {
+      const v = data.employees.find((employeeValue) => {
+        const value = `${employeeValue.firstName} ${employeeValue.lastName}`;
+        if (value === employee) {
+          return employeeValue;
+        }
+      });
+
+      setId(v?.id as string);
+    }
+  }, [employee]);
+
+  const handleSubmit = async (e: React.SyntheticEvent) => {
+    e.preventDefault();
+
+    const formData = new FormData();
+    if (!id) {
+      return toast.error("Veuillez selectionner le nom de l'employé.");
+    }
+
+    if (file) {
+      formData.append("file", file);
+    }
+
+    if (startDate) {
+      formData.append("startDate", startDate);
+    }
+
+    if (endDate) {
+      formData.append("endDate", endDate);
+    }
+
+    formData.append("employeeId", id);
+    formData.append("motif", motif);
+
+    setIsLoad(true);
+    const res = await fetch(`${host}/leave`, {
+      method: "POST",
+      redirect: "follow",
+      body: formData,
+    });
+
+    if (res.ok) {
+      mutate();
+      setIsLoad(false);
+      handleClose(false);
+      return;
+    }
+    setIsLoad(false);
+    return;
+  };
 
   return (
     <div className="w-screen h-screen fixed top-0 left-0  bg-slate-200 flex justify-center items-center backdrop-blur bg-opacity-25 z-30">
+      <Toaster />
       <form className="w-auto rounded bg-white shadow p-4 flex flex-col gap-4">
         <div className="flex justify-between items-center">
           <h2 className="text-lg font-bold uppercase text-slate-600">
@@ -31,16 +106,19 @@ const AddLeaveModal = ({ handleClose }: Props) => {
             onClick={() => handleClose(false)}
           ></span>
         </div>
-        <div className="flex gap-4">
-          <InputText label="Nom" value={name} setValue={setName} />
-        </div>
         <div className="flex gap-4 w-full">
-          <SelectLabel
-            data={employees}
-            label="Employée"
-            value={employee}
-            setValue={setEmployee}
-          />
+          {isLoading ? (
+            <div className="flex h-10 justify-center items-center">
+              <LoaderSpinner w={25} h={25} color="#222" />
+            </div>
+          ) : (
+            <SelectLabel
+              data={nameList}
+              label="Employée"
+              value={employee}
+              setValue={setEmployee}
+            />
+          )}
         </div>
 
         <div className="flex gap-4">
@@ -53,7 +131,7 @@ const AddLeaveModal = ({ handleClose }: Props) => {
             value={startDate}
             setValue={setStartDate}
           />
-          <InputText
+          <InputDateTime
             label="Date de fin"
             value={endDate}
             setValue={setEndDate}
@@ -67,8 +145,11 @@ const AddLeaveModal = ({ handleClose }: Props) => {
           />
         </div>
         <div className="flex justify-end">
-          <button className="w-32 h-10 flex justify-center items-center bg-emerald-400 text-emerald-900 rounded text-sm font-medium">
-            Valider
+          <button
+            className="w-32 h-10 flex justify-center items-center bg-emerald-400 text-emerald-900 rounded text-sm font-medium"
+            onClick={handleSubmit}
+          >
+            {isLoad ? <LoaderSpinner w={15} h={15} color="#fff" /> : "Valider"}
           </button>
         </div>
       </form>

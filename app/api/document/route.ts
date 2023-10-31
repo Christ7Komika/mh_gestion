@@ -44,7 +44,7 @@ export async function POST(req: Request, res: Response) {
             id: data.employeeId,
           },
         },
-        OtherDocumentType: {
+        otherDocumentType: {
           connect: {
             id: data.documentNameId,
           },

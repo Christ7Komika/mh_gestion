@@ -1,12 +1,18 @@
 import React from "react";
 import { TailSpin } from "react-loader-spinner";
 
-const LoaderSpinner = () => {
+interface Props {
+  w?: number;
+  h?: number;
+  color?: string;
+}
+
+const LoaderSpinner = ({ w, h, color }: Props) => {
   return (
     <TailSpin
-      height="30"
-      width="30"
-      color="#eee"
+      height={h || 30}
+      width={w || 30}
+      color={color || "#eee"}
       ariaLabel="tail-spin-loading"
       radius="1"
       wrapperStyle={{}}

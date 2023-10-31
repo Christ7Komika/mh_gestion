@@ -3,10 +3,9 @@ import { useState } from "react";
 import { FaUserPlus } from "react-icons/fa";
 import AddContractModal from "../../modal/contract/AddContractModal";
 
-type Props = { id: number };
-
 const AddContract = () => {
   const [open, setOpen] = useState(false);
+
   return (
     <>
       {open && <AddContractModal handleClose={setOpen} />}

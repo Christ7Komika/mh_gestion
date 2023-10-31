@@ -1,8 +1,20 @@
+import { Sanction } from "@/types/sanction";
 import EditLeaveAction from "../actionButton/leave/EditLeaveAction";
 import RemoveLeaveAction from "../actionButton/leave/RemoveLeaveAction";
 import State from "../state/State";
+import { cut } from "@/helpers/helpers";
+import { dateDelay } from "@/lib/helpers";
+import Link from "next/link";
+import { FaFile } from "react-icons/fa";
+import ViewSanctionAction from "../actionButton/sanction/ViewSanctionAction";
+import EditSanctionAction from "../actionButton/sanction/EditSanctionAction";
+import RemoveSanctionAction from "../actionButton/sanction/RemoveSanctionAction";
 
-const SanctionTable = () => {
+interface Props {
+  data: Sanction[];
+}
+
+const SanctionTable = ({ data }: Props) => {
   return (
     <table className=" table-auto w-full border-spacing-2 bg-slate-100 ">
       <thead className="bg-white h-14 rounded text-slate-600 font-normal">
@@ -19,44 +31,69 @@ const SanctionTable = () => {
         </tr>
       </thead>
       <tbody>
-        <tr className="h-12 text-gray-700 text-sm bg-blue-200">
-          <td className="text-center ">1</td>
-          <td className="text-center">Komika Christopher</td>
-          <td className="text-center">CDD</td>
-          <td className="text-center">
-            <State color="emerald" label="En cour" />
-          </td>
-          <td className="text-center">Lorem ipsum dolor sit amet.</td>
-          <td className="text-center">29/09/2022</td>
-          <td className="text-center">30/09/2023</td>
-          <td className="text-center">29/09/2022</td>
-          <td className="text-center">
-            <div className="flex justify-center gap-2 px-1">
-              <span className="h-4 w-4 rounded-full bg-emerald-500 block cursor-pointer" />
-              <EditLeaveAction />
-              <RemoveLeaveAction />
-            </div>
-          </td>
-        </tr>
-        <tr className="h-12 text-gray-700 text-sm bg-white">
-          <td className="text-center ">2</td>
-          <td className="text-center">Komika Christopher</td>
-          <td className="text-center">CDD</td>
-          <td className="text-center">
-            <State color="emerald" label="En cour" />
-          </td>
-          <td className="text-center">Lorem ipsum dolor sit amet.</td>
-          <td className="text-center">29/09/2022</td>
-          <td className="text-center">30/09/2023</td>
-          <td className="text-center">29/09/2022</td>
-          <td className="text-center">
-            <div className="flex justify-center gap-2 px-1">
-              <span className="h-4 w-4 rounded-full bg-emerald-500 block cursor-pointer" />
-              <EditLeaveAction />
-              <RemoveLeaveAction />
-            </div>
-          </td>
-        </tr>
+        {data.map((sanction, index) => (
+          <tr
+            className={`h-12 text-gray-700 text-sm bg-${
+              index % 2 === 0 ? "blue-200" : "white"
+            }  `}
+          >
+            <td className="text-center ">{index + 1}</td>
+            <td className="text-center">
+              {cut(
+                `${sanction.employee.lastName} ${sanction.employee.firstName}`,
+                20
+              )}
+            </td>
+            <td className="text-center">
+              {sanction.motif ? cut(sanction.motif, 20) : "-"}
+            </td>
+            <td className="text-center">
+              {sanction.status ? (
+                <State color="emerald" label="En cour" />
+              ) : (
+                "-"
+              )}
+            </td>
+            <td className="text-center">
+              {!sanction.endDate ||
+              !sanction.startDate ||
+              sanction.startDate > sanction.endDate
+                ? "-"
+                : dateDelay(
+                    new Date(sanction.startDate),
+                    new Date(sanction.endDate)
+                  )}
+            </td>
+            <td className="text-center">
+              {!sanction.startDate
+                ? "-"
+                : new Date(sanction.startDate).toLocaleDateString()}
+            </td>
+            <td className="text-center">
+              {!sanction.endDate
+                ? "-"
+                : new Date(sanction.endDate).toLocaleDateString()}
+            </td>
+            <td className="text-center">
+              {new Date(sanction.createdAt).toLocaleDateString()}
+            </td>
+            <td className="text-center">
+              <div className="flex justify-center gap-2 px-1">
+                {sanction.file && (
+                  <Link
+                    href={`/upload/${sanction.file}`}
+                    className="h-4 w-4 rounded-full bg-gray-500 flex cursor-pointer text-white justify-center items-center"
+                  >
+                    <FaFile size={10} />
+                  </Link>
+                )}
+                <ViewSanctionAction sanction={sanction} />
+                <EditSanctionAction id={sanction.id} />
+                <RemoveSanctionAction id={sanction.id} pos={index + 1} />
+              </div>
+            </td>
+          </tr>
+        ))}
       </tbody>
     </table>
   );

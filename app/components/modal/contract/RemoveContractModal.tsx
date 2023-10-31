@@ -1,10 +1,38 @@
 "use client";
+import { host } from "@/lib/host";
+import { useState } from "react";
+import useSWR from "swr";
+import LoaderSpinner from "../../loader/LoaderSpinner";
 
 interface Props {
   handleClose: React.Dispatch<React.SetStateAction<boolean>>;
+  id: string;
 }
 
-const RemoveContractModal = ({ handleClose }: Props) => {
+const RemoveContractModal = ({ handleClose, id }: Props) => {
+  const { mutate } = useSWR(`${host}/contract`);
+  const [isLoad, setIsLoad] = useState(false);
+
+  const handleDelete = async (e: React.SyntheticEvent) => {
+    e.preventDefault();
+    setIsLoad(true);
+    const res = await fetch(`${host}/contract/${id}`, {
+      method: "DELETE",
+      redirect: "follow",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (res.ok) {
+      mutate();
+      setIsLoad(false);
+      handleClose(false);
+      return;
+    }
+    setIsLoad(false);
+    return;
+  };
+
   return (
     <div className="w-screen h-screen fixed top-0 left-0  bg-slate-200 flex justify-center items-center backdrop-blur bg-opacity-25">
       <form className="w-auto rounded bg-white shadow p-4 flex flex-col gap-4">
@@ -21,8 +49,11 @@ const RemoveContractModal = ({ handleClose }: Props) => {
         </div>
 
         <div className="flex justify-end">
-          <button className="w-32 h-10 flex justify-center items-center bg-emerald-400 text-emerald-900 rounded text-sm font-medium">
-            Valider
+          <button
+            className="w-32 h-10 flex justify-center items-center bg-emerald-400 text-emerald-900 rounded text-sm font-medium"
+            onClick={handleDelete}
+          >
+            {isLoad ? <LoaderSpinner w={20} h={20} /> : "Valider"}
           </button>
         </div>
       </form>

@@ -119,7 +119,7 @@ const Employees = () => {
         {isLoading && (
           <SkeletonTheme>
             <Skeleton height={50} />
-            <Skeleton count={11} height={30} />
+            <Skeleton count={9} height={30} />
           </SkeletonTheme>
         )}
         {filterEmployees && filterEmployees.length === 0 && (

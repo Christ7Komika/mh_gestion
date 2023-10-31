@@ -6,7 +6,7 @@ const EditEmployee = () => {
   const [open, setOpen] = useState(false);
   return (
     <>
-      {open && <UpdateModal handleClose={setOpen} />}
+      {/* {open && <UpdateModal handleClose={setOpen} />} */}
       <span
         className="h-4 w-4 rounded-full bg-blue-500 block cursor-pointer"
         onClick={() => setOpen(!open)}
