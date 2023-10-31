@@ -60,8 +60,8 @@ const PaySlipTable = ({ data }: Props) => {
                   </Link>
                 )}
                 <ViewPaySlipAction payslip={payslip} />
-                {/* <EditPayslipAction />
-                <RemovePayslipAction /> */}
+                <EditPayslipAction id={payslip.id} />
+                <RemovePayslipAction id={payslip.id} pos={index + 1} />
               </div>
             </td>
           </tr>

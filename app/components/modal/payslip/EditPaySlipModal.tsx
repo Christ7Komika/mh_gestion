@@ -1,33 +1,52 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import InputText from "../../input/InputText";
 import SelectLabel from "../../input/SelectLabel";
 import InputDateTime from "../../input/InputDateTime";
 import InputFile from "../../input/InputFile";
 import TextArea from "../../input/TextArea";
 import { EmployeeName } from "@/types/employee";
-import useSWR from "swr";
 import { host } from "@/lib/host";
-import toast, { Toaster } from "react-hot-toast";
+import useSWR from "swr";
 import LoaderSpinner from "../../loader/LoaderSpinner";
+import { Leave } from "@/types/leave";
+import { PaySlip } from "@/types/payslip";
 
 interface Props {
   handleClose: React.Dispatch<React.SetStateAction<boolean>>;
+  idPayslip: string;
 }
 
-const AddPaySlipModal = ({ handleClose }: Props) => {
-  const [name, setName] = useState<string>("");
-  const [salary, setSalary] = useState<string>("");
+const EditPaySlipModal = ({ handleClose, idPayslip }: Props) => {
   const [file, setFile] = useState<File | null>(null);
-  const [payementDate, setPaymentDate] = useState<string>("");
+  const [paymentDate, setPaymentDate] = useState<string>("");
+  const [salary, setSalary] = useState<string>("");
   const [comment, setComment] = useState<string>("");
   const [employee, setEmployee] = useState<string>("");
   const [isLoad, setIsLoad] = useState<boolean>(false);
   const fetcher = (url: string) => fetch(url).then((res) => res.json());
-  const { data, isLoading } = useSWR<EmployeeName>(`${host}/employee`, fetcher);
+  const { data, isLoading: isLoadEmployees } = useSWR<EmployeeName>(
+    `${host}/employee`,
+    fetcher
+  );
   const [nameList, setNameList] = useState<string[]>([]);
   const [id, setId] = useState<string>("");
   const { mutate } = useSWR(`${host}/payslip`);
+  const { data: payslip, isLoading: isLoadPayslip } = useSWR<PaySlip>(
+    `${host}/payslip/${idPayslip}`,
+    fetcher
+  );
+
+  useEffect(() => {
+    if (payslip?.payementDate) {
+      setPaymentDate(payslip.payementDate);
+    }
+    if (payslip?.comment) {
+      setComment(payslip?.comment);
+    }
+    if (payslip?.salary) {
+      setSalary(payslip.salary);
+    }
+  }, [payslip]);
 
   useEffect(() => {
     if (data)
@@ -38,6 +57,17 @@ const AddPaySlipModal = ({ handleClose }: Props) => {
         ),
       ]);
   }, [data]);
+
+  useEffect(() => {
+    if (payslip && data) {
+      const res = data?.employees.find(
+        (employeeName) => employeeName.id === payslip?.employeeId
+      );
+      if (res) {
+        setEmployee(`${res.firstName} ${res.lastName}`);
+      }
+    }
+  }, [payslip, data, nameList]);
 
   useEffect(() => {
     if (employee === "inconnu") {
@@ -59,30 +89,17 @@ const AddPaySlipModal = ({ handleClose }: Props) => {
     e.preventDefault();
 
     const formData = new FormData();
-    if (!id) {
-      return toast.error("Veuillez selectionner le nom de l'employé.");
-    }
-
-    if (!file) {
-      return toast.error("Veuillez ajouter un document.");
-    }
-
-    if (!payementDate) {
-      return toast.error("Veuillez ajouter la dare de payement.");
-    }
-    if (!salary) {
-      return toast.error("Veuillez ajouter le salaire.");
-    }
-
     formData.append("employeeId", id);
-    formData.append("comment", comment);
-    formData.append("file", file);
-    formData.append("payementDate", payementDate);
+    if (file) {
+      formData.append("file", file);
+    }
+    formData.append("payementDate", paymentDate);
     formData.append("salary", salary);
+    formData.append("comment", comment);
 
     setIsLoad(true);
-    const res = await fetch(`${host}/payslip`, {
-      method: "POST",
+    const res = await fetch(`${host}/payslip/${idPayslip}`, {
+      method: "PUT",
       redirect: "follow",
       body: formData,
     });
@@ -99,23 +116,21 @@ const AddPaySlipModal = ({ handleClose }: Props) => {
 
   return (
     <div className="w-screen h-screen fixed top-0 left-0  bg-slate-200 flex justify-center items-center backdrop-blur bg-opacity-25 z-30">
-      <Toaster />
-      <form className=" w-96 rounded bg-white shadow p-4 flex flex-col gap-4">
+      <form className="w-auto rounded bg-white shadow p-4 flex flex-col gap-4">
         <div className="flex justify-between items-center">
           <h2 className="text-lg font-bold uppercase text-slate-600">
-            Nouveau Bulletin de paie
+            Modifier le congé
           </h2>
           <span
             className="w-5 h-5 rounded-full bg-red-500 cursor-pointer hover:bg-red-300 transition-all"
             onClick={() => handleClose(false)}
           ></span>
         </div>
-        <div className="flex gap-4">
-          <InputText label="Somme" value={salary} setValue={setSalary} />
-        </div>
-        <div className="flex gap-4 w-full items-center">
-          {isLoading ? (
-            <LoaderSpinner w={20} h={20} color="#222" />
+        <div className="flex gap-4 w-full">
+          {isLoadEmployees ? (
+            <div className="flex h-10 justify-center items-center">
+              <LoaderSpinner w={25} h={25} color="#222" />
+            </div>
           ) : (
             <SelectLabel
               data={nameList}
@@ -124,18 +139,49 @@ const AddPaySlipModal = ({ handleClose }: Props) => {
               setValue={setEmployee}
             />
           )}
-          <InputDateTime
-            label="Date de payment"
-            value={payementDate}
-            setValue={setPaymentDate}
-          />
-        </div>
-        <div className="flex gap-4">
-          <InputFile label="Bulletin de paie" setValue={setFile} />
         </div>
 
         <div className="flex gap-4">
-          <TextArea label="Commentaire" value={comment} setValue={setComment} />
+          <InputFile label="Contrat" setValue={setFile} />
+        </div>
+
+        <div className="flex gap-4">
+          {isLoadPayslip ? (
+            <div className="flex h-10 justify-center items-center">
+              <LoaderSpinner w={25} h={25} color="#222" />
+            </div>
+          ) : (
+            <InputDateTime
+              label="Salaire"
+              value={salary}
+              setValue={setSalary}
+            />
+          )}
+
+          {isLoadPayslip ? (
+            <div className="flex h-10 justify-center items-center">
+              <LoaderSpinner w={25} h={25} color="#222" />
+            </div>
+          ) : (
+            <InputDateTime
+              label="Date de payement"
+              value={paymentDate}
+              setValue={setPaymentDate}
+            />
+          )}
+        </div>
+        <div className="flex gap-4">
+          {isLoadPayslip ? (
+            <div className="flex h-10 justify-center items-center">
+              <LoaderSpinner w={25} h={25} color="#222" />
+            </div>
+          ) : (
+            <TextArea
+              label="Commentaire"
+              value={comment}
+              setValue={setComment}
+            />
+          )}
         </div>
         <div className="flex justify-end">
           <button
@@ -150,4 +196,4 @@ const AddPaySlipModal = ({ handleClose }: Props) => {
   );
 };
 
-export default AddPaySlipModal;
+export default EditPaySlipModal;

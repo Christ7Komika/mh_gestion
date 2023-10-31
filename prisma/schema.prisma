@@ -77,7 +77,7 @@ model PaySlip {
   id           String    @id @default(uuid())
   salary       String
   file         String?
-  payementDate DateTime
+  payementDate String
   comment      String?
   employee     Employee? @relation(fields: [employeeId], references: [id])
   employeeId   String?

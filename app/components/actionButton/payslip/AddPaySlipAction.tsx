@@ -3,8 +3,6 @@ import { useState } from "react";
 import { FaUserPlus } from "react-icons/fa";
 import AddPaySlipModal from "../../modal/payslip/AddPaySlipModal";
 
-type Props = { id: number };
-
 const AddPaySlipAction = () => {
   const [open, setOpen] = useState(false);
   return (

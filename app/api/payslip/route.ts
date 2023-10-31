@@ -3,7 +3,6 @@ import { existsSync, mkdirSync, unlinkSync, writeFileSync } from "fs";
 import { join } from "path";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { restDate } from "@/lib/helpers";
 
 const Payslip = {
   id: true,
@@ -47,7 +46,6 @@ export async function POST(req: NextRequest) {
   const salary = data.get("salary");
   const payementDate = data.get("payementDate");
   const employeeId = data.get("employeeId") as string;
-  let doc: string = "";
 
   const payslip: PayslipData = {
     salary: salary as string,
@@ -88,6 +86,7 @@ export async function POST(req: NextRequest) {
       status: 200,
     });
   } catch (err) {
+    console.log(err);
     if (file) {
       const path = join(process.cwd(), "public", "upload", file?.name);
       if (existsSync(path)) {

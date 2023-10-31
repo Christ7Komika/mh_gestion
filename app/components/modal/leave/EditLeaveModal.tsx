@@ -9,7 +9,6 @@ import { EmployeeName } from "@/types/employee";
 import { host } from "@/lib/host";
 import useSWR from "swr";
 import LoaderSpinner from "../../loader/LoaderSpinner";
-import { Sanction } from "@/types/sanction";
 import { Leave } from "@/types/leave";
 
 interface Props {

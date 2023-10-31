@@ -17,6 +17,7 @@ const PaySlip = () => {
   const fetcher = (url: string) => fetch(url).then((res) => res.json());
   const { data, isLoading } = useSWR<PaySlip[]>(`${host}/payslip`, fetcher);
 
+  console.log(data);
   useEffect(() => {
     if (data) {
       setPayslip(data);
@@ -48,7 +49,6 @@ const PaySlip = () => {
       <div className=" flex flex-col gap-4 sticky top-4 background">
         <Search searchFilter={setSearch} />
         <div className="w-full flex gap-4">
-          <Card name="Bulletin de paie total" value={15} />
           <Card
             name="Total Bulletin de paie"
             value={

@@ -4,7 +4,6 @@ import EmployeTable from "@/app/components/table/EmployeTable";
 import AddEmployee from "@/app/components/actionButton/employee/AddEmployee";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
-import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { Employee, GetEmployees } from "@/types/api/employee";
 import { host } from "@/lib/host";
@@ -116,12 +115,7 @@ const Employees = () => {
         </div>
       </div>
       <div className="w-full mt-8">
-        {isLoading && (
-          <SkeletonTheme>
-            <Skeleton height={50} />
-            <Skeleton count={9} height={30} />
-          </SkeletonTheme>
-        )}
+        {isLoading && <LoaderSpinner color="#222" w={50} h={50} />}
         {filterEmployees && filterEmployees.length === 0 && (
           <div className="w-full h-12 flex justify-center items-center ">
             <h2>Aucun employé trouvé.</h2>
