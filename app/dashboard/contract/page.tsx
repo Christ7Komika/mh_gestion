@@ -20,7 +20,6 @@ const Contract = () => {
     null
   );
   const [search, setSearch] = useState<string>("");
-  const [filter, setFilter] = useState<string>("");
   const fetcher = (url: string) => fetch(url).then((res) => res.json());
   const { data, isLoading } = useSWR<GetContracts>(`${host}/contract`, fetcher);
 
@@ -45,14 +44,14 @@ const Contract = () => {
           setFilterContracts([
             ...filterContracts?.filter(
               (employeeContract) =>
-                `${employeeContract.employee.lastName} ${employeeContract.employee.firstName}`.search(
-                  search
-                ) !== -1
+                `${employeeContract.employee.lastName} ${employeeContract.employee.firstName}`
+                  .toLowerCase()
+                  .search(search.toLowerCase()) !== -1
             ),
           ]);
       }
     }
-  }, [search, filter]);
+  }, [search]);
 
   return (
     <div className="w-full relative z-0">

@@ -50,3 +50,54 @@ export function dateDelay(dateDebut: Date, dateFin: Date): string {
     return `${heures} heure${heures > 1 ? "s" : ""}`;
   }
 }
+
+export function getMessageForDateRange(startDate: Date, endDate: Date): string {
+  const now = new Date();
+  if (now < startDate) {
+    let timeDiff = startDate.getTime() - now.getTime();
+    const oneDay = 24 * 60 * 60 * 1000; // Nombre de millisecondes dans une journée
+    const oneMonth = 30 * oneDay; // Environ 30 jours par mois
+    const oneYear = 365 * oneDay; // Environ 365 jours par an
+
+    let message = "Dans ";
+    if (timeDiff >= oneYear) {
+      const years = Math.floor(timeDiff / oneYear);
+      message += `${years} an${years > 1 ? "s" : ""}`;
+      timeDiff %= oneYear;
+    }
+    if (timeDiff >= oneMonth) {
+      const months = Math.floor(timeDiff / oneMonth);
+      message += `${months > 0 ? " et " : ""}${months} mois`;
+      timeDiff %= oneMonth;
+    }
+    const days = Math.floor(timeDiff / oneDay);
+    message += `${days > 0 ? " et " : ""}${days} jour${days > 1 ? "s" : ""}`;
+
+    return message;
+  } else if (now.toDateString() === endDate.toDateString()) {
+    return "Expire aujourd'hui";
+  } else if (now < endDate) {
+    let timeDiff = endDate.getTime() - now.getTime();
+    const oneDay = 24 * 60 * 60 * 1000; // Nombre de millisecondes dans une journée
+    const oneMonth = 30 * oneDay; // Environ 30 jours par mois
+    const oneYear = 365 * oneDay; // Environ 365 jours par an
+
+    let message = "Expire dans ";
+    if (timeDiff >= oneYear) {
+      const years = Math.floor(timeDiff / oneYear);
+      message += `${years} an${years > 1 ? "s" : ""}`;
+      timeDiff %= oneYear;
+    }
+    if (timeDiff >= oneMonth) {
+      const months = Math.floor(timeDiff / oneMonth);
+      message += `${months > 0 ? " et " : ""}${months} mois`;
+      timeDiff %= oneMonth;
+    }
+    const days = Math.floor(timeDiff / oneDay);
+    message += `${days > 0 ? " et " : ""}${days} jour${days > 1 ? "s" : ""}`;
+
+    return message;
+  } else {
+    return "Expiré";
+  }
+}

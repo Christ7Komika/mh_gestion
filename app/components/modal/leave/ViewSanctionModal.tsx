@@ -80,11 +80,11 @@ const ViewLeaveModal = ({ handleClose, leave }: Props) => {
             </div>
           )}
           {leave.motif && (
-            <div className="w-full flex gap-2 bg-slate-50 rounded p-2 items-end">
+            <div className="w-full flex flex-col h-auto  bg-slate-50 rounded p-2 items-start">
               <h2 className="text-slate-500 font-bold text-base uppercase">
                 Motif du congé
               </h2>
-              <span className="text-slate-500 text-md ">{leave.motif}</span>
+              <span className="text-slate-500 text-left">{leave.motif}</span>
             </div>
           )}
         </div>

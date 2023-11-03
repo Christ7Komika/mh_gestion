@@ -48,11 +48,13 @@ const ViewPayslipModal = ({ handleClose, payslip }: Props) => {
           )}
 
           {payslip.comment && (
-            <div className="w-full flex gap-2 bg-slate-50 rounded p-2 items-end">
+            <div className="w-full flex flex-col h-auto  bg-slate-50 rounded p-2 items-start">
               <h2 className="text-slate-500 font-bold text-base uppercase">
                 Commentaire
               </h2>
-              <span className="text-slate-500 text-md ">{payslip.comment}</span>
+              <span className="text-slate-500 text-left">
+                {payslip.comment}
+              </span>
             </div>
           )}
         </div>

@@ -1,30 +1,25 @@
 "use client";
-import React, {
-  useCallback,
-  useState,
-  MouseEventHandler,
-  useEffect,
-  useRef,
-} from "react";
+import React, { useCallback, useState, MouseEventHandler, useRef } from "react";
 import InputText from "../../input/InputText";
 import { IoAddOutline } from "react-icons/io5";
 import { host } from "@/lib/host";
 import LoaderSpinner from "../../loader/LoaderSpinner";
-import { FaMinus } from "react-icons/fa";
 import { OtherDocumentType } from "@/types/document";
-import useSWR, { mutate } from "swr";
+import useSWR from "swr";
 import Skeleton from "react-loading-skeleton";
 import toast, { Toaster } from "react-hot-toast";
 import DeleteActionButton from "../../actionButton/categor/DeleteActionButton";
+import { Employee } from "@/types/api/employee";
+import { KeyedMutator } from "swr";
 
 interface Props {
+  mutate: KeyedMutator<Employee>;
   handleClose: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const AddDocumentModal = ({ handleClose }: Props) => {
+const AddDocumentModal = ({ handleClose, mutate: mutateEmployee }: Props) => {
   const [name, setName] = useState<string>("");
   const [isLoad, setIsLoad] = useState<boolean>(false);
-  const spanRef = useRef<HTMLSpanElement>(null);
   const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
   const { isLoading, data, mutate } = useSWR<OtherDocumentType[]>(
@@ -53,6 +48,7 @@ const AddDocumentModal = ({ handleClose }: Props) => {
         .then(() => {
           setIsLoad(false);
           mutate();
+          mutateEmployee();
           setName("");
           return;
         })

@@ -6,28 +6,36 @@ import InputDateTime from "../../input/InputDateTime";
 import InputFile from "../../input/InputFile";
 import TextArea from "../../input/TextArea";
 import { host } from "@/lib/host";
-import useSWR from "swr";
+import useSWR, { KeyedMutator } from "swr";
 import toast, { Toaster } from "react-hot-toast";
 import LoaderSpinner from "../../loader/LoaderSpinner";
+import { Employee } from "@/types/api/employee";
+import { Categories } from "@/types/api/categorie";
 
 interface Props {
   handleClose: React.Dispatch<React.SetStateAction<boolean>>;
   id: string;
+  mutate: KeyedMutator<Employee>;
+  mutateCategories: KeyedMutator<Categories[]>;
 }
 
 type Category = { name: string; id: string };
 
-const AddDocumentModal = ({ handleClose, id }: Props) => {
+const AddDocumentModal = ({
+  handleClose,
+  id,
+  mutate,
+  mutateCategories,
+}: Props) => {
   const [type, setType] = useState<string>("inconnu");
   const [file, setFile] = useState<File | null>(null);
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
   const [comment, setComment] = useState<string>("");
-  const [isContractFile, setIsContractFile] = useState<boolean>(false);
   const fetcher = (url: string) => fetch(url).then((res) => res.json());
   const [documentType, setDocumentType] = useState<string[] | []>([]);
   const [load, setLoad] = useState<boolean>(false);
-  const { data } = useSWR<Category[]>(`${host}/category`, fetcher);
+  const { data, isLoading } = useSWR<Category[]>(`${host}/category`, fetcher);
 
   useEffect(() => {
     if (data) {
@@ -35,23 +43,18 @@ const AddDocumentModal = ({ handleClose, id }: Props) => {
     }
   }, [data]);
 
-  useEffect(() => {
-    if (type === "Contrat") {
-      setIsContractFile(true);
-    } else {
-      setIsContractFile(false);
-    }
-  }, [type]);
-
   const handleSubmit = (e: React.SyntheticEvent) => {
     e.preventDefault();
     if (type === "inconnu") {
       toast.error("Veuillez selectionner le type de document");
+      return;
     }
 
     if (!file) {
       toast.error("Veuillez ajouter un document (pdf/word/image)");
+      return;
     }
+
     const documentId = data?.find((v) => v.name === type)?.id;
     const submitDdata = new FormData();
     submitDdata.append("documentNameId", documentId as string);
@@ -67,6 +70,8 @@ const AddDocumentModal = ({ handleClose, id }: Props) => {
       body: submitDdata,
     })
       .then(() => {
+        mutate();
+        mutateCategories();
         setLoad(false);
         handleClose(false);
       })
@@ -89,7 +94,9 @@ const AddDocumentModal = ({ handleClose, id }: Props) => {
             ></span>
           </div>
           <div className="flex gap-4">
-            {documentType && (
+            {documentType && isLoading ? (
+              <LoaderSpinner w={15} h={15} color="#222" />
+            ) : (
               <SelectLabel
                 data={documentType}
                 label="Type de document"
@@ -122,12 +129,16 @@ const AddDocumentModal = ({ handleClose, id }: Props) => {
             />
           </div>
           <div className="flex justify-end">
-            <button
-              className="w-32 h-10 flex justify-center items-center bg-emerald-400 text-emerald-900 rounded text-sm font-medium"
-              onClick={handleSubmit}
-            >
-              {load ? <LoaderSpinner /> : "Valider"}
-            </button>
+            {isLoading ? (
+              <button className="w-32 h-10 flex justify-center items-center bg-gray-300 text-gray-500 rounded text-sm font-medium"></button>
+            ) : (
+              <button
+                className="w-32 h-10 flex justify-center items-center bg-emerald-400 text-white rounded text-sm font-medium cursor-pointer"
+                onClick={handleSubmit}
+              >
+                {load ? <LoaderSpinner /> : "Valider"}
+              </button>
+            )}
           </div>
         </form>
       </div>
@@ -135,7 +146,5 @@ const AddDocumentModal = ({ handleClose, id }: Props) => {
     </>
   );
 };
-
-const contract = ["CDD", "CDI", "Stage", "Prestation"];
 
 export default AddDocumentModal;

@@ -1,5 +1,4 @@
 "use client";
-
 import { EmployeeDocument } from "@/types/document";
 import DocumentTable from "../../table/DocumentTable";
 import { MouseEventHandler, useCallback, useState } from "react";
@@ -7,14 +6,16 @@ import LoaderSpinner from "../../loader/LoaderSpinner";
 import { host } from "@/lib/host";
 import { Employee } from "@/types/api/employee";
 import { KeyedMutator } from "swr";
+import { Categories, OtherDocument } from "@/types/api/categorie";
 
 interface Props {
   handleClose: React.Dispatch<React.SetStateAction<boolean>>;
-  doc: EmployeeDocument[];
-  mutate: KeyedMutator<Employee>;
+  doc: OtherDocument[];
+  mutate: KeyedMutator<Categories[]>;
+  name: string;
 }
 
-const DocumentModal = ({ handleClose, doc, mutate }: Props) => {
+const DocumentModal = ({ handleClose, doc, mutate, name }: Props) => {
   const [employeeDocument, setEmployeeDocument] =
     useState<EmployeeDocument | null>(null);
   const [docId, setDocId] = useState<string | null>(null);
@@ -44,9 +45,9 @@ const DocumentModal = ({ handleClose, doc, mutate }: Props) => {
         });
 
         if (data.ok) {
+          setDocId(null);
           mutate();
           setIsLoad(false);
-          setDocId(null);
         }
         setIsLoad(false);
       }
@@ -60,7 +61,7 @@ const DocumentModal = ({ handleClose, doc, mutate }: Props) => {
         <div className="w-full rounded bg-white shadow p-4 flex flex-col gap-4">
           <div className="flex justify-between items-center">
             <h2 className="text-lg font-bold uppercase text-slate-600">
-              {doc[0].otherDocumentType.name} ({doc.length})
+              {name} ({doc.length})
             </h2>
             <span
               className="w-5 h-5 rounded-full bg-red-500 cursor-pointer hover:bg-red-300 transition-all"

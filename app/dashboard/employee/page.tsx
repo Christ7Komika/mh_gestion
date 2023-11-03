@@ -45,8 +45,9 @@ const Employees = () => {
           setFilterEmployess([
             ...filterEmployees?.filter(
               (employee) =>
-                `${employee.lastName} ${employee.firstName}`.search(filter) !==
-                -1
+                `${employee.lastName} ${employee.firstName}`
+                  .toLowerCase()
+                  .search(filter.toLowerCase()) !== -1
             ),
           ]);
       }

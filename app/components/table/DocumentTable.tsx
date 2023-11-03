@@ -1,9 +1,10 @@
 import React from "react";
 import { EmployeeDocument } from "@/types/document";
 import TableRowAction from "../actionButton/table/TableRowAction";
+import { OtherDocument } from "@/types/api/categorie";
 
 interface Props {
-  doc: EmployeeDocument[];
+  doc: OtherDocument[];
   getEmployeeDoc: (elt: EmployeeDocument | null) => void;
   deleteEmployeeDoc: (elt: EmployeeDocument | null, id: string | "") => void;
 }

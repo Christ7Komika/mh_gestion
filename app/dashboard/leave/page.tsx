@@ -40,9 +40,9 @@ const Leave = () => {
           setFilterLeaves([
             ...filterLeaves.filter(
               (leave) =>
-                `${leave.employee.lastName} ${leave.employee.firstName}`.search(
-                  search
-                ) !== -1
+                `${leave.employee.lastName} ${leave.employee.firstName}`
+                  .toLowerCase()
+                  .search(search.toLowerCase()) !== -1
             ),
           ]);
         }

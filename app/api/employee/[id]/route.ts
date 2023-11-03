@@ -1,13 +1,14 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { PostEmployee } from "@/types/api/employee";
+import { join } from "path";
+import { existsSync, unlinkSync } from "fs";
 
 interface RouteProps {
   params: { id: string };
 }
 
-export async function GET(req: Request) {
-  const id = req.url.split("employee/")[1];
+export async function GET(req: Request, { params: { id } }: RouteProps) {
   try {
     const data = await prisma.employee.findUnique({
       where: { id: id },
@@ -52,14 +53,20 @@ export async function PUT(req: Request, { params: { id } }: RouteProps) {
   }
 }
 
-export async function DELETE(req: Request) {
-  const id = req.url.split("employee/")[1];
+export async function DELETE(req: Request, { params: { id } }: RouteProps) {
   try {
-    await prisma.employee.delete({
+    const data = await prisma.employee.delete({
       where: {
         id: id,
       },
     });
+
+    if (data.profil) {
+      const path = join(process.cwd(), "public", "upload", data.profil);
+      if (existsSync(path)) {
+        unlinkSync(path);
+      }
+    }
 
     return NextResponse.json("");
   } catch (err) {

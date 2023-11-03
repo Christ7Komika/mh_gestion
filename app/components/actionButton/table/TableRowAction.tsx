@@ -3,9 +3,10 @@ import React, { useState } from "react";
 import State from "../../state/State";
 import { restDate } from "@/lib/helpers";
 import Link from "next/link";
+import { OtherDocument } from "@/types/api/categorie";
 
 interface Props {
-  elt: EmployeeDocument;
+  elt: OtherDocument;
   index: number;
   getEmployeeDoc: (elt: EmployeeDocument | null) => void;
   deleteEmployeeDoc: (elt: EmployeeDocument | null, id: string | "") => void;

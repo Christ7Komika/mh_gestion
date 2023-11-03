@@ -12,7 +12,7 @@ export default function DashboardLayout({
 }) {
   return (
     <main className="grid grid-cols-layout h-screen ">
-      <div className=" relative">
+      <div className="">
         <div className="bg-white shadow p-2 flex flex-col gap-3 sticky top-0 h-screen">
           <Header />
           <hr className=" border-gray-100" />

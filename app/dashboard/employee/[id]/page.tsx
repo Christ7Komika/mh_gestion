@@ -2,15 +2,15 @@
 import { AddDocument } from "@/app/components/actionButton/employee/AddDocument";
 import ViewDocument from "@/app/components/actionButton/employee/ViewDocument";
 import ViewEditButton from "@/app/components/actionButton/employee/ViewEditButton";
-import { BiPrinter, BiCross } from "react-icons/bi";
+import { BiPrinter } from "react-icons/bi";
 import { host } from "@/lib/host";
 import useSWR from "swr";
 import { Employee } from "@/types/api/employee";
 import ContentLoader from "react-content-loader";
 import { useEffect, useState } from "react";
-import Image from "next/image";
 import { AddDocumentType } from "@/app/components/actionButton/employee/AddDocumentType";
 import EmployeeProfil from "@/app/components/actionButton/employee/EmployeeProfil";
+import { Categories } from "@/types/api/categorie";
 
 interface Props {
   params: {
@@ -22,10 +22,18 @@ const Employee = ({ params: { id } }: Props) => {
   const [employee, setEmployee] = useState<Employee>();
   const fetcher = (url: string) => fetch(url).then((r) => r.json());
   const [hasDocument, setHasDocument] = useState<boolean>(false);
-  const { data, isLoading, mutate } = useSWR<Employee>(
-    `${host}/employee/${id}`,
-    fetcher
-  );
+  const {
+    data,
+    isLoading,
+    mutate: mutateEmployee,
+  } = useSWR<Employee>(`${host}/employee/${id}`, fetcher);
+  const {
+    data: categories,
+    isLoading: isLoadingCategories,
+    mutate: mutateCategories,
+  } = useSWR<Categories[]>(`${host}/category/${id}`, fetcher);
+
+  console.log("==> ", categories);
 
   useEffect(() => {
     setEmployee(data);
@@ -61,7 +69,10 @@ const Employee = ({ params: { id } }: Props) => {
             </ContentLoader>
           ) : (
             <>
-              <ViewEditButton employee={employee as Employee} mutate={mutate} />
+              <ViewEditButton
+                employee={employee as Employee}
+                mutate={mutateEmployee}
+              />
               <button className="flex gap-2 border border-slate-600 rounded w-32 h-9 items-center justify-center text-slate-500 hover:bg-slate-100 transition-all">
                 Imprimer
                 <BiPrinter size={15} />
@@ -122,7 +133,7 @@ const Employee = ({ params: { id } }: Props) => {
                     <EmployeeProfil
                       profil={employee?.profil}
                       id={employee.id}
-                      mutate={mutate}
+                      mutate={mutateEmployee}
                     />
                   )}
                 </div>
@@ -225,8 +236,14 @@ const Employee = ({ params: { id } }: Props) => {
               AUTRE INFORMATION
             </h2>
             <div className="flex gap-2">
-              <AddDocumentType />
-              {employee?.id && <AddDocument id={employee.id} />}
+              <AddDocumentType mutate={mutateEmployee} />
+              {employee?.id && (
+                <AddDocument
+                  id={employee.id}
+                  mutate={mutateEmployee}
+                  mutateCategories={mutateCategories}
+                />
+              )}
             </div>
           </>
         )}
@@ -234,7 +251,7 @@ const Employee = ({ params: { id } }: Props) => {
       {/*  DOCUMENT ACTION */}
 
       {/* SECTION TWO */}
-      {isLoading && (
+      {isLoadingCategories && (
         <div className="bg-white shadow p-4 rounded flex flex-col gap-2">
           <ContentLoader
             speed={2}
@@ -258,14 +275,25 @@ const Employee = ({ params: { id } }: Props) => {
           </ContentLoader>
         </div>
       )}
-      {employee && hasDocument && (
+      {categories && (
         <div className="bg-white shadow p-4 rounded flex flex-col gap-2 h-full">
           {/* OTHER DOCUMENT */}
-          <div className="flex gap-2 items-center">
-            <p className="text-slate-600 uppercase">
-              {employee.OtherDocument[0].otherDocumentType.name}
-            </p>
-            <ViewDocument doc={employee.OtherDocument} mutate={mutate} />
+          <div className="flex gap-2 flex-wrap">
+            {categories.map((categorie) => (
+              <div
+                className="flex gap-2 items-center py-2 px-4 rounded-full bg-slate-50 "
+                key={categorie.id}
+              >
+                <p className="text-slate-600 uppercase">
+                  {categorie.name} ({categorie.OtherDocument.length})
+                </p>
+                <ViewDocument
+                  doc={categorie.OtherDocument}
+                  mutate={mutateCategories}
+                  name={categorie.name}
+                />
+              </div>
+            ))}
           </div>
         </div>
       )}

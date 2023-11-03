@@ -17,7 +17,6 @@ const PaySlip = () => {
   const fetcher = (url: string) => fetch(url).then((res) => res.json());
   const { data, isLoading } = useSWR<PaySlip[]>(`${host}/payslip`, fetcher);
 
-  console.log(data);
   useEffect(() => {
     if (data) {
       setPayslip(data);
@@ -35,9 +34,9 @@ const PaySlip = () => {
           setFilterPaySlip([
             ...filterPaySlip.filter(
               (payslip) =>
-                `${payslip.employee.lastName} ${payslip.employee.firstName}`.search(
-                  search
-                ) !== -1
+                `${payslip.employee.lastName} ${payslip.employee.firstName}`
+                  .toLowerCase()
+                  .search(search.toLowerCase()) !== -1
             ),
           ]);
         }

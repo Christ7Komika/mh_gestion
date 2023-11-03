@@ -8,8 +8,8 @@ import { EmployeeName } from "@/types/employee";
 import { host } from "@/lib/host";
 import useSWR from "swr";
 import LoaderSpinner from "../../loader/LoaderSpinner";
-import { Leave } from "@/types/leave";
 import { PaySlip } from "@/types/payslip";
+import InputText from "../../input/InputText";
 
 interface Props {
   handleClose: React.Dispatch<React.SetStateAction<boolean>>;
@@ -24,10 +24,7 @@ const EditPaySlipModal = ({ handleClose, idPayslip }: Props) => {
   const [employee, setEmployee] = useState<string>("");
   const [isLoad, setIsLoad] = useState<boolean>(false);
   const fetcher = (url: string) => fetch(url).then((res) => res.json());
-  const { data, isLoading: isLoadEmployees } = useSWR<EmployeeName>(
-    `${host}/employee`,
-    fetcher
-  );
+  const { data } = useSWR<EmployeeName>(`${host}/employee`, fetcher);
   const [nameList, setNameList] = useState<string[]>([]);
   const [id, setId] = useState<string>("");
   const { mutate } = useSWR(`${host}/payslip`);
@@ -119,7 +116,7 @@ const EditPaySlipModal = ({ handleClose, idPayslip }: Props) => {
       <form className="w-auto rounded bg-white shadow p-4 flex flex-col gap-4">
         <div className="flex justify-between items-center">
           <h2 className="text-lg font-bold uppercase text-slate-600">
-            Modifier le congé
+            Modifier le bulletin de paie
           </h2>
           <span
             className="w-5 h-5 rounded-full bg-red-500 cursor-pointer hover:bg-red-300 transition-all"
@@ -127,7 +124,7 @@ const EditPaySlipModal = ({ handleClose, idPayslip }: Props) => {
           ></span>
         </div>
         <div className="flex gap-4 w-full">
-          {isLoadEmployees ? (
+          {isLoadPayslip ? (
             <div className="flex h-10 justify-center items-center">
               <LoaderSpinner w={25} h={25} color="#222" />
             </div>
@@ -151,11 +148,7 @@ const EditPaySlipModal = ({ handleClose, idPayslip }: Props) => {
               <LoaderSpinner w={25} h={25} color="#222" />
             </div>
           ) : (
-            <InputDateTime
-              label="Salaire"
-              value={salary}
-              setValue={setSalary}
-            />
+            <InputText label="Salaire" value={salary} setValue={setSalary} />
           )}
 
           {isLoadPayslip ? (

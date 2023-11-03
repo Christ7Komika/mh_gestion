@@ -88,11 +88,11 @@ const ViewSanctionModal = ({ handleClose, sanction }: Props) => {
             </div>
           )}
           {sanction.motif && (
-            <div className="w-full flex gap-2 bg-slate-50 rounded p-2 items-end">
+            <div className="w-full flex flex-col h-auto  bg-slate-50 rounded p-2 items-start">
               <h2 className="text-slate-500 font-bold text-base uppercase">
                 Motif de la sanction
               </h2>
-              <span className="text-slate-500 text-md ">{sanction.motif}</span>
+              <span className="text-slate-500 text-left">{sanction.motif}</span>
             </div>
           )}
         </div>

@@ -16,7 +16,6 @@ interface Props {
 }
 
 const AddPaySlipModal = ({ handleClose }: Props) => {
-  const [name, setName] = useState<string>("");
   const [salary, setSalary] = useState<string>("");
   const [file, setFile] = useState<File | null>(null);
   const [payementDate, setPaymentDate] = useState<string>("");

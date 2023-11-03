@@ -43,7 +43,7 @@ const Sanction = () => {
             ...filterSanctions.filter(
               (sanction) =>
                 `${sanction.employee.lastName} ${sanction.employee.firstName}`.search(
-                  search
+                  search.toLowerCase()
                 ) !== -1
             ),
           ]);
