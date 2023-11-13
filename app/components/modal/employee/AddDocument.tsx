@@ -11,6 +11,19 @@ import toast, { Toaster } from "react-hot-toast";
 import LoaderSpinner from "../../loader/LoaderSpinner";
 import { Employee } from "@/types/api/employee";
 import { Categories } from "@/types/api/categorie";
+import { isExpired } from "@/lib/helpers";
+
+interface Documents {
+  id: string;
+  employeeId: string;
+  startDate: string;
+  endDate: string;
+  otherDocumentType: {
+    id: string;
+    name: string;
+  };
+  otherDocumentTypeId: string;
+}
 
 interface Props {
   handleClose: React.Dispatch<React.SetStateAction<boolean>>;
@@ -36,6 +49,12 @@ const AddDocumentModal = ({
   const [documentType, setDocumentType] = useState<string[] | []>([]);
   const [load, setLoad] = useState<boolean>(false);
   const { data, isLoading } = useSWR<Category[]>(`${host}/category`, fetcher);
+  const { data: documents } = useSWR<Documents[]>(
+    `${host}/document/${id}`,
+    fetcher
+  );
+
+  console.log({ document });
 
   useEffect(() => {
     if (data) {
@@ -53,6 +72,33 @@ const AddDocumentModal = ({
     if (!file) {
       toast.error("Veuillez ajouter un document (pdf/word/image)");
       return;
+    }
+
+    if (endDate && !startDate) {
+      return toast.error(
+        "Vous ne pouvez pas inserer un date de fin sans avoir insérer la date de début"
+      );
+    }
+
+    if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
+      return toast.error(
+        "La date de début ne peux pas etre superieur a la date de fin"
+      );
+    }
+
+    const expired = documents?.find(
+      (document) =>
+        document.endDate &&
+        document.otherDocumentType.name === type &&
+        !isExpired(document.endDate)
+    );
+
+    if (endDate && !isExpired(endDate) && expired) {
+      return toast.error(
+        "Oups, vous ne pouvez pas avoir deux " +
+          type.toLowerCase() +
+          " en cour d'execution."
+      );
     }
 
     const documentId = data?.find((v) => v.name === type)?.id;

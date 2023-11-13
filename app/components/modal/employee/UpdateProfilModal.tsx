@@ -17,13 +17,18 @@ interface Props {
 }
 
 const UpdateProfilModal = ({ handleClose, profil, id, mutate }: Props) => {
-  const [defaultImage, setDefaultImage] = useState<string>("");
   const [file, setFile] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [isLoad, setIsLoad] = useState(false);
+
   useEffect(() => {
-    setDefaultImage(profil || "");
-  }, []);
+    if (file) {
+      const img = URL.createObjectURL(file);
+      setPreview(img);
+      return;
+    }
+    setPreview(null);
+  }, [file]);
 
   const handleRemoveImage = async (e: React.SyntheticEvent) => {
     e.preventDefault();
@@ -40,9 +45,9 @@ const UpdateProfilModal = ({ handleClose, profil, id, mutate }: Props) => {
     });
 
     if (res.ok) {
+      setIsLoad(false);
       mutate();
       handleClose(false);
-      setIsLoad(false);
       return;
     }
     setIsLoad(false);
@@ -63,9 +68,9 @@ const UpdateProfilModal = ({ handleClose, profil, id, mutate }: Props) => {
     });
 
     if (res.ok) {
+      setIsLoad(false);
       mutate();
       handleClose(false);
-      setIsLoad(false);
       return;
     }
     setIsLoad(false);
@@ -74,8 +79,18 @@ const UpdateProfilModal = ({ handleClose, profil, id, mutate }: Props) => {
   return (
     <div className="w-screen h-screen fixed top-0 left-0  bg-slate-200 flex justify-center items-center backdrop-blur bg-opacity-25 z-20">
       <Toaster />
-      <div className="relative w-full h-full max-w-[500px] max-h-[500px] ">
-        {profil ? (
+      <label
+        htmlFor="profil"
+        className="cursor-pointer relative w-full h-full max-w-[500px] max-h-[500px] "
+      >
+        {preview ? (
+          <Image
+            src={preview}
+            alt="Profil de l'employé"
+            fill
+            className="object-cover object-center rounded-full"
+          />
+        ) : profil ? (
           <Image
             src={"/upload/" + profil}
             alt="Profil de l'employé"
@@ -83,15 +98,13 @@ const UpdateProfilModal = ({ handleClose, profil, id, mutate }: Props) => {
             className="object-cover object-center rounded-full"
           />
         ) : (
-          <label
-            htmlFor="profil"
-            className="w-full h-full rounded-full flex justify-center items-center text-slate-400 cursor-pointer bg-slate-300"
-          >
+          <div className="w-full h-full rounded-full flex justify-center items-center text-slate-400  bg-slate-300">
             <FaImage size={300} />
-          </label>
+          </div>
         )}
         <input
           type="file"
+          accept="image/*"
           name="profil"
           id="profil"
           style={{ display: "none" }}
@@ -127,7 +140,7 @@ const UpdateProfilModal = ({ handleClose, profil, id, mutate }: Props) => {
             </>
           )}
         </div>
-      </div>
+      </label>
     </div>
   );
 };

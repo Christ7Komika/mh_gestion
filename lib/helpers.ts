@@ -11,6 +11,19 @@ export function restDate(date2: string): number | string {
     return Number(joursRestants.toFixed(0));
   }
 }
+export function isExpired(date2: string): boolean {
+  const date1Obj = new Date(Date.now());
+  const date2Obj = new Date(date2);
+
+  const differenceEnMillisecondes = date2Obj.getTime() - date1Obj.getTime();
+  const joursRestants = differenceEnMillisecondes / (1000 * 60 * 60 * 24);
+
+  if (joursRestants < 0) {
+    return true;
+  } else {
+    return false;
+  }
+}
 
 export function duration(dateDebut: Date, dateFin: Date): number {
   const ms = dateFin.getTime() - dateDebut.getTime();

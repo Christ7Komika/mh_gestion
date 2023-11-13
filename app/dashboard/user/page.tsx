@@ -1,5 +1,7 @@
 const User = () => {
-  return <div>Urilisateur</div>;
+  return <div>
+    
+  </div>;
 };
 
 export default User;

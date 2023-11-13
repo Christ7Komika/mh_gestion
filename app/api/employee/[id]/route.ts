@@ -3,6 +3,7 @@ import prisma from "@/lib/prisma";
 import { PostEmployee } from "@/types/api/employee";
 import { join } from "path";
 import { existsSync, unlinkSync } from "fs";
+import { host } from "@/lib/host";
 
 interface RouteProps {
   params: { id: string };
@@ -44,7 +45,6 @@ export async function PUT(req: Request, { params: { id } }: RouteProps) {
       status: 200,
     });
   } catch (err) {
-    console.log(err);
     return NextResponse.json({
       message: "La requête a échoué",
       status: 400,
@@ -67,8 +67,9 @@ export async function DELETE(req: Request, { params: { id } }: RouteProps) {
         unlinkSync(path);
       }
     }
-
-    return NextResponse.json("");
+    return NextResponse.json({
+      message: "La requête a été exécuté avec succès",
+    });
   } catch (err) {
     return NextResponse.json({
       message: "La requete a échoué",

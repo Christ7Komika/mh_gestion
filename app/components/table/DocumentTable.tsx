@@ -23,15 +23,17 @@ const DocumentTable = ({ doc, getEmployeeDoc, deleteEmployeeDoc }: Props) => {
         </tr>
       </thead>
       <tbody>
-        {doc.map((elt, index) => (
-          <TableRowAction
-            elt={elt}
-            index={index}
-            getEmployeeDoc={getEmployeeDoc}
-            deleteEmployeeDoc={deleteEmployeeDoc}
-            key={elt.id}
-          />
-        ))}
+        {doc
+          .sort((a, b) => Date.parse(b.endDate) - Date.parse(a.endDate))
+          .map((elt, index) => (
+            <TableRowAction
+              elt={elt}
+              index={index}
+              getEmployeeDoc={getEmployeeDoc}
+              deleteEmployeeDoc={deleteEmployeeDoc}
+              key={elt.id}
+            />
+          ))}
       </tbody>
     </table>
   );

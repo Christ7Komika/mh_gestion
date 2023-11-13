@@ -43,6 +43,7 @@ model Contract {
   endDate    String
   employee   Employee? @relation(fields: [employeeId], references: [id])
   employeeId String?
+  isNew      Boolean?  @default(false)
   updatedAt  DateTime  @updatedAt
   createdAt  DateTime  @default(now())
 }
@@ -56,6 +57,7 @@ model Leave {
   endDate    String?
   employee   Employee? @relation(fields: [employeeId], references: [id])
   employeeId String?
+  isNew      Boolean?  @default(false)
   updatedAt  DateTime  @updatedAt
   createdAt  DateTime  @default(now())
 }
@@ -69,6 +71,7 @@ model Sanction {
   endDate    String?
   employee   Employee? @relation(fields: [employeeId], references: [id])
   employeeId String?
+  isNew      Boolean?  @default(false)
   updatedAt  DateTime  @updatedAt
   createdAt  DateTime  @default(now())
 }
@@ -108,6 +111,7 @@ model OtherDocument {
   employeeId          String
   updatedAt           DateTime          @updatedAt
   createdAt           DateTime          @default(now())
+  isNew               Boolean?          @default(false)
   otherDocumentType   OtherDocumentType @relation(fields: [otherDocumentTypeId], references: [id])
   otherDocumentTypeId String
 }

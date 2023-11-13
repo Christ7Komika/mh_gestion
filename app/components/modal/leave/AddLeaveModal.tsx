@@ -9,6 +9,8 @@ import { host } from "@/lib/host";
 import LoaderSpinner from "../../loader/LoaderSpinner";
 import { EmployeeName } from "@/types/employee";
 import toast, { Toaster } from "react-hot-toast";
+import { GetLeave } from "@/types/leave";
+import { isExpired } from "@/lib/helpers";
 
 interface Props {
   handleClose: React.Dispatch<React.SetStateAction<boolean>>;
@@ -25,7 +27,7 @@ const AddLeaveModal = ({ handleClose }: Props) => {
   const { data, isLoading } = useSWR<EmployeeName>(`${host}/employee`, fetcher);
   const [nameList, setNameList] = useState<string[]>([]);
   const [id, setId] = useState<string>("");
-  const { mutate } = useSWR(`${host}/leave`);
+  const { data: leaves, mutate } = useSWR<GetLeave>(`${host}/leave`);
 
   useEffect(() => {
     if (data)
@@ -71,6 +73,23 @@ const AddLeaveModal = ({ handleClose }: Props) => {
 
     if (endDate) {
       formData.append("endDate", endDate);
+    }
+
+    if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
+      return toast.error(
+        "La date de début ne peux pas etre superieur a la date de fin"
+      );
+    }
+
+    const expired = leaves?.data.find(
+      (leave) =>
+        leave.employeeId === id && leave.endDate && !isExpired(leave.endDate)
+    );
+
+    if (expired && !isExpired(endDate)) {
+      return toast.error(
+        "Oups, vous ne pouvez pas avoir deux congés en cour d'utilisation."
+      );
     }
 
     formData.append("employeeId", id);

@@ -94,6 +94,11 @@ export async function DELETE(req: NextRequest, { params: { id } }: RouteProps) {
       where: { id },
     });
 
+    console.log({
+      id,
+      leave,
+    });
+
     if (leave.file) {
       const path = join(process.cwd(), "public", "upload", leave.file);
       if (existsSync(path)) {
@@ -105,6 +110,7 @@ export async function DELETE(req: NextRequest, { params: { id } }: RouteProps) {
       status: 200,
     });
   } catch (err) {
+    console.log(err);
     return NextResponse.json({
       message: "La requête à échoué",
       status: 400,

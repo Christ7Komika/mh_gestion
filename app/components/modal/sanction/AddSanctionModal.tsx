@@ -9,6 +9,8 @@ import { host } from "@/lib/host";
 import LoaderSpinner from "../../loader/LoaderSpinner";
 import { EmployeeName } from "@/types/employee";
 import toast, { Toaster } from "react-hot-toast";
+import { GetSanctions } from "@/types/sanction";
+import { isExpired } from "@/lib/helpers";
 
 interface Props {
   handleClose: React.Dispatch<React.SetStateAction<boolean>>;
@@ -25,7 +27,7 @@ const AddSanctionModal = ({ handleClose }: Props) => {
   const { data, isLoading } = useSWR<EmployeeName>(`${host}/employee`, fetcher);
   const [nameList, setNameList] = useState<string[]>([]);
   const [id, setId] = useState<string>("");
-  const { mutate } = useSWR(`${host}/sanction`);
+  const { data: sanctions, mutate } = useSWR<GetSanctions>(`${host}/sanction`);
 
   useEffect(() => {
     if (data)
@@ -65,12 +67,46 @@ const AddSanctionModal = ({ handleClose }: Props) => {
       formData.append("file", file);
     }
 
+    if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
+      return toast.error(
+        "La date de début ne peux pas etre superieur a la date de fin"
+      );
+    }
+
     if (startDate) {
       formData.append("startDate", startDate);
     }
 
     if (endDate) {
       formData.append("endDate", endDate);
+    }
+
+    if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
+      return toast.error(
+        "La date de début ne peux pas etre superieur a la date de fin"
+      );
+    }
+
+    const expired = sanctions?.data.find(
+      (sanction) =>
+        sanction.employeeId === id &&
+        sanction.endDate &&
+        !isExpired(sanction.endDate)
+    );
+
+    sanctions?.data.forEach((sanction) => {
+      if (sanction.endDate) {
+        console.log({
+          sanction,
+          expired: !isExpired(sanction.endDate),
+        });
+      }
+    });
+
+    if (endDate && expired && !isExpired(endDate)) {
+      return toast.error(
+        "Oups, vous ne pouvez pas avoir deux sanctions en cour d'utilisation."
+      );
     }
 
     formData.append("employeeId", id);

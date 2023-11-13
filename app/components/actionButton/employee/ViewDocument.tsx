@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { BiBookOpen } from "react-icons/bi";
 import DocumentModal from "../../modal/employee/DocumentModal";
-import { Employee } from "@/types/api/employee";
 import { KeyedMutator } from "swr";
 import { Categories, OtherDocument } from "@/types/api/categorie";
 

@@ -64,7 +64,7 @@ const Employees = () => {
             value={
               isLoading ? (
                 <span>
-                  <LoaderSpinner />
+                  <LoaderSpinner w={15} h={15} color="#222" />
                 </span>
               ) : (
                 count
@@ -76,7 +76,7 @@ const Employees = () => {
             value={
               isLoading ? (
                 <span>
-                  <LoaderSpinner />
+                  <LoaderSpinner w={15} h={15} color="#222" />
                 </span>
               ) : (
                 currentContract
@@ -88,7 +88,7 @@ const Employees = () => {
             value={
               isLoading ? (
                 <span>
-                  <LoaderSpinner />
+                  <LoaderSpinner w={15} h={15} color="#222" />
                 </span>
               ) : (
                 endContract
@@ -100,7 +100,7 @@ const Employees = () => {
             value={
               isLoading ? (
                 <span>
-                  <LoaderSpinner />
+                  <LoaderSpinner w={15} h={15} color="#222" />
                 </span>
               ) : (
                 currentLeave

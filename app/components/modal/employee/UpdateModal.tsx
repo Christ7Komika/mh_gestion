@@ -12,6 +12,7 @@ import { Employee } from "@/types/api/employee";
 import LoaderSpinner from "../../loader/LoaderSpinner";
 import { host } from "@/lib/host";
 import { KeyedMutator } from "swr";
+import InputDateTime from "../../input/InputDateTime";
 
 interface Props {
   handleClose: React.Dispatch<React.SetStateAction<boolean>>;
@@ -113,7 +114,7 @@ const UpdateModal = ({ handleClose, employee, mutate }: Props) => {
         </div>
         <div className="flex gap-4">
           <InputText label="Adresse" value={address} setValue={setAddress} />
-          <InputText label="Age *" value={age} setValue={setAge} />
+          <InputDateTime label="Age *" value={age} setValue={setAge} />
         </div>
         <div className="flex gap-4">
           <InputText

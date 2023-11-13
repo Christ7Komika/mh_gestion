@@ -8,6 +8,8 @@ import { host } from "@/lib/host";
 import { EmployeeName } from "@/types/employee";
 import toast, { Toaster } from "react-hot-toast";
 import LoaderSpinner from "../../loader/LoaderSpinner";
+import { GetContracts } from "@/types/contract";
+import { isExpired } from "@/lib/helpers";
 
 interface Props {
   handleClose: React.Dispatch<React.SetStateAction<boolean>>;
@@ -24,7 +26,7 @@ const AddContractModal = ({ handleClose }: Props) => {
   const { data, isLoading } = useSWR<EmployeeName>(`${host}/employee`, fetcher);
   const [nameList, setNameList] = useState<string[]>([]);
   const [id, setId] = useState<string>("");
-  const { mutate } = useSWR(`${host}/contract`);
+  const { data: contracts, mutate } = useSWR<GetContracts>(`${host}/contract`);
 
   useEffect(() => {
     if (data)
@@ -72,6 +74,36 @@ const AddContractModal = ({ handleClose }: Props) => {
     if (contractType !== "CDI" && !endDate) {
       return toast.error("Veuillez inserer la date de fin de contrat.");
     }
+
+    if (contractType === "CDI" && !startDate) {
+      return toast.error("Veuillez inserer la date de début de contrat.");
+    }
+
+    if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
+      return toast.error(
+        "La date de début ne peux pas etre superieur a la date de fin"
+      );
+    }
+
+    const expired = contracts?.data.find(
+      (contract) =>
+        contract.endDate &&
+        contract.employee.id === id &&
+        !isExpired(contract.endDate)
+    );
+
+    if (contractType === "CDI" && startDate && expired) {
+      return toast.error(
+        "Oups, vous ne pouvez pas avoir deux contrats en cour d'utilisation."
+      );
+    }
+
+    if (endDate && expired && !isExpired(endDate)) {
+      return toast.error(
+        "Oups, vous ne pouvez pas avoir deux contrats en cour d'execution."
+      );
+    }
+
     const formData = new FormData();
     formData.append("employeeId", id);
     formData.append("file", file);

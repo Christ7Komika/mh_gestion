@@ -7,8 +7,22 @@ interface RouteProps {
   params: { id: string };
 }
 
+export async function GET(req: Request, { params: { id } }: RouteProps) {
+  return NextResponse.json(
+    await prisma.otherDocument.findMany({
+      where: {
+        employee: {
+          id,
+        },
+      },
+      include: {
+        otherDocumentType: true,
+      },
+    })
+  );
+}
+
 export async function DELETE(req: Request, { params: { id } }: RouteProps) {
-  console.log({ id: id });
   try {
     const otherDocument = await prisma.otherDocument.delete({
       where: {

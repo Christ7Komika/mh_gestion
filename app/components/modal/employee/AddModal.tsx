@@ -8,6 +8,8 @@ import Modal from "react-modal";
 import InputFile from "../../input/InputFile";
 import useSWR from "swr";
 import LoaderSpinner from "../../loader/LoaderSpinner";
+import InputDateTime from "../../input/InputDateTime";
+import { GetEmployees } from "@/types/api/employee";
 
 interface Props {
   handleClose: React.Dispatch<React.SetStateAction<boolean>>;
@@ -28,8 +30,9 @@ const AddModal = ({ handleClose, open }: Props) => {
   const [post, setPost] = useState("");
   const [profil, setProfl] = useState<File | null>(null);
   const [isLoad, setIsload] = useState(false);
+  const [alreadyExist, setAlreadyExist] = useState(false);
 
-  const { mutate } = useSWR(`${host}/employee`);
+  const { data, mutate } = useSWR<GetEmployees>(`${host}/employee`);
 
   const regex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 
@@ -140,7 +143,7 @@ const AddModal = ({ handleClose, open }: Props) => {
         </div>
         <div className="flex gap-4">
           <InputText label="Adresse" value={address} setValue={setAddress} />
-          <InputText label="Age *" value={age} setValue={setAge} />
+          <InputDateTime label="Age *" value={age} setValue={setAge} />
         </div>
         <div className="flex gap-4">
           <InputText

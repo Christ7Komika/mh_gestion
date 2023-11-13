@@ -20,9 +20,6 @@ const RemoveLeaveModal = ({ handleClose, id, pos }: Props) => {
     const res = await fetch(`${host}/leave/${id}`, {
       method: "DELETE",
       redirect: "follow",
-      headers: {
-        "Content-Type": "appliaction/json",
-      },
     });
 
     if (res.ok) {

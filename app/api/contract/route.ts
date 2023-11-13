@@ -13,8 +13,10 @@ const Contracts = {
   startDate: true,
   endDate: true,
   createdAt: true,
+  employeeId: true,
   employee: {
     select: {
+      id: true,
       firstName: true,
       lastName: true,
     },
@@ -78,6 +80,16 @@ export async function POST(req: Request) {
   };
 
   try {
+    await prisma.contract.updateMany({
+      where: {
+        employee: {
+          id: contract.employeeId,
+        },
+      },
+      data: {
+        isNew: false,
+      },
+    });
     await prisma.contract.create({
       data: {
         type: contract.type,
@@ -85,6 +97,7 @@ export async function POST(req: Request) {
         file: contract.file,
         startDate: contract.startDate,
         endDate: contract.endDate,
+        isNew: true,
         employee: {
           connect: {
             id: contract.employeeId,

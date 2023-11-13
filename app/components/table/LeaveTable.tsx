@@ -5,7 +5,6 @@ import { cut } from "@/helpers/helpers";
 import { dateDelay } from "@/lib/helpers";
 import Link from "next/link";
 import { FaFile } from "react-icons/fa";
-import ViewSanctionAction from "../actionButton/sanction/ViewSanctionAction";
 import { Leave } from "@/types/leave";
 import ViewLeaveAction from "../actionButton/leave/ViewLeaveAction";
 

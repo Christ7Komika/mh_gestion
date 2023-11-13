@@ -13,8 +13,10 @@ const leaves = {
   endDate: true,
   motif: true,
   employeeId: true,
+  createdAt: true,
   employee: {
     select: {
+      id: true,
       firstName: true,
       lastName: true,
     },
@@ -85,9 +87,20 @@ export async function POST(req: NextRequest) {
 
   // CREATE A NEW SANCTION
   try {
+    await prisma.leave.updateMany({
+      where: {
+        employee: {
+          id: employeeId,
+        },
+      },
+      data: {
+        isNew: false,
+      },
+    });
     await prisma.leave.create({
       data: {
         ...leaves,
+        isNew: true,
         employee: {
           connect: {
             id: employeeId,

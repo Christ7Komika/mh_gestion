@@ -33,12 +33,28 @@ export async function POST(req: Request, res: Response) {
   }
 
   try {
+    await prisma.otherDocument.updateMany({
+      where: {
+        AND: {
+          otherDocumentType: {
+            id: data.documentNameId,
+          },
+          employee: {
+            id: data.employeeId,
+          },
+        },
+      },
+      data: {
+        isNew: false,
+      },
+    });
     await prisma.otherDocument.create({
       data: {
         document: data.document as string,
         comment: data.comment,
         startDate: data.startDate,
         endDate: data.endDate,
+        isNew: true,
         employee: {
           connect: {
             id: data.employeeId,

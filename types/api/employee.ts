@@ -18,17 +18,21 @@ export type Employee = {
     isExpired: boolean;
     comment: string;
     startDate: string;
+    isNew: boolean;
     endDate: string;
     otherDocumentType: { name: string };
     createdAt: string;
   }[];
   Contract: {
     type: string;
+    isNew: boolean;
   }[];
   Leave: {
     status: string;
+    isNew: boolean;
   }[];
   Sanction: {
+    isNew: boolean;
     status: string;
   }[];
   createdAt: string;

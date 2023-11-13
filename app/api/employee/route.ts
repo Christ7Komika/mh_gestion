@@ -55,7 +55,12 @@ export const employees = {
 export async function GET(req: Request) {
   return NextResponse.json({
     employees: await prisma.employee.findMany({
-      select: employees,
+      include: {
+        Contract: true,
+        Leave: true,
+        Sanction: true,
+        OtherDocument: true,
+      },
       orderBy: {
         createdAt: "desc",
       },

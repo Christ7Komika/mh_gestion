@@ -1,7 +1,7 @@
 import { EmployeeDocument } from "@/types/document";
 import React, { useState } from "react";
 import State from "../../state/State";
-import { restDate } from "@/lib/helpers";
+import { dateDelay, isExpired } from "@/lib/helpers";
 import Link from "next/link";
 import { OtherDocument } from "@/types/api/categorie";
 
@@ -32,19 +32,11 @@ const TableRowAction = ({
       <td className="text-center">
         {!elt.endDate ? (
           "-"
-        ) : typeof restDate(elt.endDate) === "number" ? (
-          <State
-            color="emerald"
-            label={`${
-              Number(restDate(elt.endDate)) >= 1
-                ? `${restDate(elt.endDate)} jour${
-                    Number(restDate(elt.endDate)) > 1 ? "s" : ""
-                  }`
-                : "- 24h"
-            }`}
-          />
         ) : (
-          <State color="red" label={`${restDate(elt.endDate)}`} />
+          <State
+            color={isExpired(elt.endDate) ? "red" : "emerald"}
+            label={dateDelay(new Date(), new Date(elt.endDate))}
+          />
         )}
       </td>
       <td className="text-center">
@@ -63,10 +55,11 @@ const TableRowAction = ({
             className="h-4 w-4 rounded-full bg-emerald-500 block cursor-pointer"
             onClick={() => getEmployeeDoc(elt)}
           />
-          <Link
+          <a
             className="h-4 w-4 rounded-full bg-blue-500 block cursor-pointer"
+            target="_blank"
             href={`/upload/${elt.document}`}
-          ></Link>
+          ></a>
           <span
             className="h-4 w-4 rounded-full bg-red-500 block cursor-pointer"
             onClick={() => deleteEmployeeDoc(null, elt.id)}

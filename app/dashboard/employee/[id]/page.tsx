@@ -21,7 +21,6 @@ interface Props {
 const Employee = ({ params: { id } }: Props) => {
   const [employee, setEmployee] = useState<Employee>();
   const fetcher = (url: string) => fetch(url).then((r) => r.json());
-  const [hasDocument, setHasDocument] = useState<boolean>(false);
   const {
     data,
     isLoading,
@@ -33,20 +32,8 @@ const Employee = ({ params: { id } }: Props) => {
     mutate: mutateCategories,
   } = useSWR<Categories[]>(`${host}/category/${id}`, fetcher);
 
-  console.log("==> ", categories);
-
   useEffect(() => {
     setEmployee(data);
-
-    if (
-      data &&
-      (data.Contract?.length >= 1 ||
-        data.Leave?.length >= 1 ||
-        data.Sanction?.length >= 1 ||
-        data.OtherDocument?.length >= 1)
-    ) {
-      setHasDocument(true);
-    }
   }, [data]);
 
   return (
@@ -168,6 +155,12 @@ const Employee = ({ params: { id } }: Props) => {
                 <div className="flex gap-1 ">
                   <p className="text-slate-600 uppercase underline">Genre: </p>
                   <p className=" text-slate-500">{employee?.gender}</p>
+                </div>
+                <div className="flex gap-1 ">
+                  <p className="text-slate-600 uppercase underline">
+                    Date de naissance:{" "}
+                  </p>
+                  <p className=" text-slate-500">{employee?.age}</p>
                 </div>
               </div>
               <div className="flex gap-1 ">

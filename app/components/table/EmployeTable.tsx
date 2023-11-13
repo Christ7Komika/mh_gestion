@@ -52,18 +52,36 @@ const EmployeTable = ({ data }: Props) => {
             </td>
             <td className="text-center">{employee.phone}</td>
             <td className="text-center">
-              {employee.Contract.length >= 1 ? employee.Contract[0].type : "-"}
+              {employee.Contract.length >= 1
+                ? `${
+                    employee.Contract.find(
+                      (contract) => contract.isNew === true
+                    )?.type
+                  }`
+                : "-"}
             </td>
             <td className="text-center">
               {employee.Leave.length >= 1 ? (
-                <State color="blue" label={employee.Leave[0].status} />
+                <State
+                  color="blue"
+                  label={
+                    employee.Leave.find((leave) => leave.isNew === true)!.status
+                  }
+                />
               ) : (
                 "-"
               )}
             </td>
             <td className="text-center">
               {employee.Sanction.length >= 1 ? (
-                <State color="blue" label={employee.Sanction[0].status} />
+                <State
+                  color="blue"
+                  label={
+                    employee.Sanction.find(
+                      (sanction) => sanction.isNew === true
+                    )!.status
+                  }
+                />
               ) : (
                 "-"
               )}
@@ -74,10 +92,17 @@ const EmployeTable = ({ data }: Props) => {
             <td className="text-center">
               <div className="flex justify-center gap-2">
                 <ViewEmployee id={employee.id} />
-                <RemoveEmployee
-                  id={employee.id}
-                  employee={`${employee.lastName} ${employee.firstName}`}
-                />
+                {!(
+                  employee.Contract.length >= 1 ||
+                  employee.Leave.length >= 1 ||
+                  employee.OtherDocument.length >= 1 ||
+                  employee.Sanction.length >= 1
+                ) && (
+                  <RemoveEmployee
+                    id={employee.id}
+                    employee={`${employee.lastName} ${employee.firstName}`}
+                  />
+                )}
               </div>
             </td>
           </tr>

@@ -12,8 +12,10 @@ const Sanctions = {
   motif: true,
   startDate: true,
   endDate: true,
+  employeeId: true,
   employee: {
     select: {
+      id: true,
       firstName: true,
       lastName: true,
     },
@@ -85,9 +87,20 @@ export async function POST(req: NextRequest) {
 
   // CREATE A NEW SANCTION
   try {
+    await prisma.sanction.updateMany({
+      where: {
+        employee: {
+          id: employeeId,
+        },
+      },
+      data: {
+        isNew: false,
+      },
+    });
     await prisma.sanction.create({
       data: {
         ...sanctions,
+        isNew: true,
         employee: {
           connect: {
             id: employeeId,
