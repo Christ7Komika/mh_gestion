@@ -3,6 +3,7 @@ import { uploadPath } from "@/lib/host";
 import { existsSync, mkdirSync, unlinkSync, writeFileSync } from "fs";
 import { NextResponse, type NextRequest } from "next/server";
 import { join } from "path";
+import prisma from "@/lib/prisma";
 
 interface RouteProps {
   params: {

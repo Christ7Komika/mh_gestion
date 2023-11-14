@@ -2,6 +2,7 @@ import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
 import env from "@/env";
+import prisma from "@/lib/prisma";
 
 interface RouteProps {
   params: { id: string };

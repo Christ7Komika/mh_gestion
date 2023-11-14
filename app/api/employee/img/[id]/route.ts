@@ -1,6 +1,5 @@
 import { uploadPath } from "@/lib/host";
 import prisma from "@/lib/prisma";
-import { tr } from "date-fns/locale";
 import { existsSync, unlinkSync, writeFileSync } from "fs";
 import { NextResponse } from "next/server";
 import { join } from "path";

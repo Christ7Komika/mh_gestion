@@ -4,17 +4,10 @@ import jwt from "jsonwebtoken";
 import env from "@/env";
 import prisma from "@/lib/prisma";
 
-export async function GET() {
-  return NextResponse.json(await prisma.user.findMany());
-}
-
-export async function POST(req: Request) {
-  const { username, password, role } = await req.json();
-  if (!username || !password || !role) {
-    return NextResponse.json({
-      message: "Vous avez des champs mmanquant.",
-    });
-  }
+export async function GET(req: Request) {
+  const password = "MH@2021";
+  const username = "MH";
+  const role = "ADMIN";
   const hash = bcrypt.hashSync(password, 10);
   const token = jwt.sign(password, env.JWT_SECRET as string);
 
@@ -31,6 +24,11 @@ export async function POST(req: Request) {
       message: "La requête a été exécuté avec succès",
     });
   } catch (err) {
+    console.log({
+      message: "La requete a échoué",
+      status: 400,
+      error: err,
+    });
     return NextResponse.json({
       message: "La requete a échoué",
       status: 400,
