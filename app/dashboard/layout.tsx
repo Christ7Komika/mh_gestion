@@ -3,7 +3,7 @@ import Header from "../components/header/Header";
 import Menu from "../components/menu/Menu";
 import Alarm from "../components/actionButton/notification/Alarm";
 export const metadata: Metadata = {
-  title: "Dashboard",
+  title: "TABLEAU DE BORD",
 };
 
 export default function DashboardLayout({

@@ -24,11 +24,6 @@ export async function GET(req: Request) {
       message: "La requête a été exécuté avec succès",
     });
   } catch (err) {
-    console.log({
-      message: "La requete a échoué",
-      status: 400,
-      error: err,
-    });
     return NextResponse.json({
       message: "La requete a échoué",
       status: 400,
