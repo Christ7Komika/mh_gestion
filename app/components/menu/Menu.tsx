@@ -48,7 +48,7 @@ const Menu = () => {
       secure: false,
     },
   ]);
-  const role = window.localStorage.getItem("role");
+  const role = localStorage.getItem("role");
   const path = usePathname();
 
   useEffect(() => {

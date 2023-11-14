@@ -4,101 +4,58 @@ import { PostEmployee } from "@/types/api/employee";
 import { join } from "path";
 import { existsSync, mkdirSync, unlinkSync, writeFileSync } from "fs";
 
-export const employee = {
-  id: true,
-  firstName: true,
-  lastName: true,
-  nationality: true,
-  gender: true,
-  age: true,
-  address: true,
-  phone: true,
-  email: true,
-  maritalStatus: true,
-  children: true,
-  post: true,
-  Contract: {},
-  Leave: {},
-  Sanction: {},
-  PayDayAdvance: {},
-  PaySlip: {},
-  OtherDocument: {},
-  createdAt: true,
-};
-
-export const employees = {
-  id: true,
-  firstName: true,
-  lastName: true,
-  phone: true,
-  profil: true,
-  post: true,
-  Contract: {
-    select: {
-      type: true,
-    },
-  },
-  Leave: {
-    select: {
-      status: true,
-    },
-  },
-  Sanction: {
-    select: {
-      status: true,
-    },
-  },
-
-  createdAt: true,
-};
-
 export async function GET(req: Request) {
+  const employees = await prisma.employee.findMany({
+    include: {
+      Contract: true,
+      Leave: true,
+      Sanction: true,
+      OtherDocument: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+  const count = await prisma.employee.count();
+  const currentContract = await prisma.employee.count({
+    where: {
+      Contract: {
+        some: {
+          status: {
+            equals: true,
+          },
+        },
+      },
+    },
+  });
+  const endContract = await prisma.employee.count({
+    where: {
+      Contract: {
+        some: {
+          status: {
+            equals: false,
+          },
+        },
+      },
+    },
+  });
+  const currentLeave = await prisma.employee.count({
+    where: {
+      Leave: {
+        some: {
+          status: {
+            equals: true,
+          },
+        },
+      },
+    },
+  });
   return NextResponse.json({
-    employees: await prisma.employee.findMany({
-      include: {
-        Contract: true,
-        Leave: true,
-        Sanction: true,
-        OtherDocument: true,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    }),
-    count: await prisma.employee.count(),
-    currentContract: await prisma.employee.count({
-      where: {
-        Contract: {
-          some: {
-            status: {
-              equals: true,
-            },
-          },
-        },
-      },
-    }),
-    endContract: await prisma.employee.count({
-      where: {
-        Contract: {
-          some: {
-            status: {
-              equals: false,
-            },
-          },
-        },
-      },
-    }),
-    currentLeave: await prisma.employee.count({
-      where: {
-        Leave: {
-          some: {
-            status: {
-              equals: true,
-            },
-          },
-        },
-      },
-    }),
+    employees,
+    count,
+    currentContract,
+    endContract,
+    currentLeave,
   });
 }
 
@@ -148,7 +105,15 @@ export async function POST(req: Request, res: Response) {
     });
     return NextResponse.json(
       await prisma.employee.findMany({
-        select: employees,
+        include: {
+          Contract: true,
+          Leave: true,
+          Sanction: true,
+          OtherDocument: true,
+        },
+        orderBy: {
+          createdAt: "desc",
+        },
       })
     );
   } catch (err) {

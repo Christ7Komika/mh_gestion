@@ -2,7 +2,7 @@ import { getExpirationStatus } from "@/helpers/helpers";
 import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
-interface Document {
+export interface Document {
   id: string;
   startDate: string;
   endDate: string;

@@ -1,5 +1,5 @@
 "use client";
-import { NotificationItem } from "@/app/api/notification/route";
+import { ElementStatus } from "@/app/api/notification/route";
 import Card from "@/app/components/card/Card";
 import Search from "@/app/components/input/Search";
 import LoaderSpinner from "@/app/components/loader/LoaderSpinner";
@@ -11,10 +11,10 @@ import useSWR from "swr";
 
 export default function Warning() {
   const [search, setSearch] = useState<string>("");
-  const [documents, setDocuments] = useState<NotificationItem[] | []>([]);
-  const [filterDocuments, setFilterDocuments] = useState<
-    NotificationItem[] | []
-  >([]);
+  const [documents, setDocuments] = useState<ElementStatus[] | []>([]);
+  const [filterDocuments, setFilterDocuments] = useState<ElementStatus[] | []>(
+    []
+  );
 
   const [all, setAll] = useState<boolean>(false);
 

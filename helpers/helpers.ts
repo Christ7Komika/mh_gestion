@@ -16,7 +16,7 @@ interface Element {
     lastName: string;
   };
 }
-interface ElementStatus {
+export interface ElementStatus {
   id: string;
   employee: string;
   status: number;

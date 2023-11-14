@@ -1,16 +1,16 @@
 "use client";
-import { NotificationItem } from "@/app/api/notification/route";
 import { host } from "@/lib/host";
 import { Notification } from "@/types/notification";
 import { useEffect, useState } from "react";
 import { Puff } from "react-loader-spinner";
 import useSWR from "swr";
 import { useRouter } from "next/navigation";
+import { ElementStatus } from "@/app/api/notification/route";
 
 export default function Alarm() {
   const fetcher = (url: string) => fetch(url).then((res) => res.json());
   const { data } = useSWR<Notification>(`${host}/notification`, fetcher);
-  const [documents, setDocuments] = useState<NotificationItem[] | []>([]);
+  const [documents, setDocuments] = useState<ElementStatus[] | []>([]);
   const route = useRouter();
 
   useEffect(() => {

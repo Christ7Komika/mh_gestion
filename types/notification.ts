@@ -1,7 +1,7 @@
-import { NotificationItem } from "@/app/api/notification/route";
+import { ElementStatus } from "@/app/api/notification/route";
 
 export interface Notification {
-  expiredIn10Days: NotificationItem[];
-  expiredToday: NotificationItem[];
-  expired: NotificationItem[];
+  expiredIn10Days: ElementStatus[];
+  expiredToday: ElementStatus[];
+  expired: ElementStatus[];
 }

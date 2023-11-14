@@ -1,10 +1,10 @@
-import { NotificationItem } from "@/app/api/notification/route";
+import { ElementStatus } from "@/app/api/notification/route";
 import { dateDelay, isExpired } from "@/lib/helpers";
 import React from "react";
 import State from "../state/State";
 
 interface Props {
-  notifications: NotificationItem[];
+  notifications: ElementStatus[];
 }
 
 const NotificationTable = ({ notifications }: Props) => {

@@ -1,6 +1,4 @@
 "use client";
-
-import { employee } from "@/app/api/employee/route";
 import { host } from "@/lib/host";
 import { useState } from "react";
 import useSWR from "swr";
