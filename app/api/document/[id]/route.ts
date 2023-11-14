@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
 import { join } from "path";
 import { existsSync, unlinkSync } from "fs";
+import { uploadPath } from "@/lib/host";
 
 interface RouteProps {
   params: { id: string };
@@ -30,12 +31,7 @@ export async function DELETE(req: Request, { params: { id } }: RouteProps) {
       },
     });
     if (otherDocument.document) {
-      const path = join(
-        process.cwd(),
-        "public",
-        "upload",
-        otherDocument.document
-      );
+      const path = join(uploadPath, otherDocument.document);
       if (existsSync(path)) {
         unlinkSync(path);
       }

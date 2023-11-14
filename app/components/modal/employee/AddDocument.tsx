@@ -54,8 +54,6 @@ const AddDocumentModal = ({
     fetcher
   );
 
-  console.log({ document });
-
   useEffect(() => {
     if (data) {
       setDocumentType(data.map((v) => v.name));

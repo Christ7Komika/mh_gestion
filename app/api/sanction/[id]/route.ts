@@ -1,4 +1,5 @@
 import { restDate } from "@/lib/helpers";
+import { uploadPath } from "@/lib/host";
 import { existsSync, mkdirSync, unlinkSync, writeFileSync } from "fs";
 import { NextResponse, type NextRequest } from "next/server";
 import { join } from "path";
@@ -42,11 +43,11 @@ export async function PUT(req: NextRequest, { params: { id } }: RouteProps) {
 
   if (file) {
     if (oldSanction?.file) {
-      const path = join(process.cwd(), "public", "upload", oldSanction?.file);
+      const path = join(uploadPath, oldSanction?.file);
       unlinkSync(path);
     }
     const buffer = Buffer.from(await file.arrayBuffer());
-    const path = join(process.cwd(), "public", "upload");
+    const path = join(uploadPath);
     if (!existsSync(path)) {
       mkdirSync(path);
     }
@@ -95,7 +96,7 @@ export async function DELETE(req: NextRequest, { params: { id } }: RouteProps) {
     });
 
     if (sanction.file) {
-      const path = join(process.cwd(), "public", "upload", sanction.file);
+      const path = join(uploadPath, sanction.file);
       if (existsSync(path)) {
         unlinkSync(path);
       }

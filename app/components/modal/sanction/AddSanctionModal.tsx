@@ -27,7 +27,10 @@ const AddSanctionModal = ({ handleClose }: Props) => {
   const { data, isLoading } = useSWR<EmployeeName>(`${host}/employee`, fetcher);
   const [nameList, setNameList] = useState<string[]>([]);
   const [id, setId] = useState<string>("");
-  const { data: sanctions, mutate } = useSWR<GetSanctions>(`${host}/sanction`);
+  const { data: sanctions, mutate } = useSWR<GetSanctions>(
+    `${host}/sanction`,
+    fetcher
+  );
 
   useEffect(() => {
     if (data)
@@ -93,15 +96,6 @@ const AddSanctionModal = ({ handleClose }: Props) => {
         sanction.endDate &&
         !isExpired(sanction.endDate)
     );
-
-    sanctions?.data.forEach((sanction) => {
-      if (sanction.endDate) {
-        console.log({
-          sanction,
-          expired: !isExpired(sanction.endDate),
-        });
-      }
-    });
 
     if (endDate && expired && !isExpired(endDate)) {
       return toast.error(

@@ -1,7 +1,7 @@
 "use client";
 import { host } from "@/lib/host";
-import useSWR from "swr";
 import { useState } from "react";
+import useSWR from "swr";
 import LoaderSpinner from "../../loader/LoaderSpinner";
 
 interface Props {
@@ -10,18 +10,17 @@ interface Props {
   pos: number;
 }
 
-const RemoveSanctionModal = ({ handleClose, id, pos }: Props) => {
-  const { mutate } = useSWR(`${host}/sanction`);
+const RemoveUserModal = ({ handleClose, id, pos }: Props) => {
   const [isLoad, setIsLoad] = useState(false);
+  const { mutate } = useSWR(`${host}/user`);
 
   const handleDelete = async (e: React.SyntheticEvent) => {
     e.preventDefault();
     setIsLoad(true);
-    const res = await fetch(`${host}/sanction/${id}`, {
+    const res = await fetch(`${host}/user/${id}`, {
       method: "DELETE",
       redirect: "follow",
     });
-
     if (res.ok) {
       mutate();
       setIsLoad(false);
@@ -31,6 +30,7 @@ const RemoveSanctionModal = ({ handleClose, id, pos }: Props) => {
     setIsLoad(false);
     return;
   };
+
   return (
     <div className="w-screen h-screen fixed top-0 left-0  bg-slate-200 flex justify-center items-center backdrop-blur bg-opacity-25">
       <form className="w-auto rounded bg-white shadow p-4 flex flex-col gap-4">
@@ -42,7 +42,7 @@ const RemoveSanctionModal = ({ handleClose, id, pos }: Props) => {
         </div>
         <div className="flex h-8 items-center">
           <h2 className="text-slate-500 font-medium text-md">
-            Voulez vous vraiment supprimer l'élélement n°{pos}
+            Voulez vous vraiment supprimer l'utilisateur {pos}
           </h2>
         </div>
 
@@ -59,4 +59,4 @@ const RemoveSanctionModal = ({ handleClose, id, pos }: Props) => {
   );
 };
 
-export default RemoveSanctionModal;
+export default RemoveUserModal;

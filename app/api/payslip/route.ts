@@ -3,6 +3,7 @@ import { existsSync, mkdirSync, unlinkSync, writeFileSync } from "fs";
 import { join } from "path";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { uploadPath } from "@/lib/host";
 
 const Payslip = {
   id: true,
@@ -55,7 +56,7 @@ export async function POST(req: NextRequest) {
   // ADD FILE
   if (file) {
     const buffer = Buffer.from(await file.arrayBuffer());
-    const path = join(process.cwd(), "public", "upload");
+    const path = join(uploadPath);
     if (!existsSync(path)) {
       mkdirSync(path);
     }
@@ -86,9 +87,8 @@ export async function POST(req: NextRequest) {
       status: 200,
     });
   } catch (err) {
-    console.log(err);
     if (file) {
-      const path = join(process.cwd(), "public", "upload", file?.name);
+      const path = join(uploadPath, file?.name);
       if (existsSync(path)) {
         unlinkSync(path);
       }

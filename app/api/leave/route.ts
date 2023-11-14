@@ -4,6 +4,7 @@ import { join } from "path";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { restDate } from "@/lib/helpers";
+import { uploadPath } from "@/lib/host";
 
 const leaves = {
   id: true,
@@ -56,14 +57,13 @@ export async function POST(req: NextRequest) {
   const startDate = data.get("startDate");
   const endDate = data.get("endDate");
   const employeeId = data.get("employeeId") as string;
-  let doc: string = "";
 
   const leaves: LeaveData = {};
 
   // ADD FILE
   if (file) {
     const buffer = Buffer.from(await file.arrayBuffer());
-    const path = join(process.cwd(), "public", "upload");
+    const path = join(uploadPath);
     if (!existsSync(path)) {
       mkdirSync(path);
     }

@@ -1,3 +1,4 @@
+import { uploadPath } from "@/lib/host";
 import prisma from "@/lib/prisma";
 import { existsSync, mkdirSync, unlinkSync, writeFileSync } from "fs";
 import { NextResponse } from "next/server";
@@ -25,10 +26,10 @@ export async function POST(req: Request, res: Response) {
   const document = formData.get("document") as File;
   if (document) {
     const file = Buffer.from(await document.arrayBuffer());
-    if (!existsSync(join(process.cwd(), "public/upload"))) {
-      mkdirSync(join(process.cwd(), "public/upload"));
+    if (!existsSync(join(uploadPath))) {
+      mkdirSync(join(uploadPath));
     }
-    writeFileSync(join(process.cwd(), "public/upload", document.name), file);
+    writeFileSync(join(uploadPath, document.name), file);
     data.document = document.name;
   }
 
@@ -68,13 +69,12 @@ export async function POST(req: Request, res: Response) {
       },
     });
   } catch (err) {
-    const path = join(process.cwd(), "public/upload", document.name);
+    const path = join(uploadPath, document.name);
     unlinkSync(path);
     return NextResponse.json({
       message: "La requête à échoué.",
       err: err,
     });
   }
-  console.log(data);
   return NextResponse.json(data);
 }

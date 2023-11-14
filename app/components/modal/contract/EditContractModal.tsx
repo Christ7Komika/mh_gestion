@@ -9,8 +9,6 @@ import { Contract } from "@/types/contract";
 import { EmployeeName } from "@/types/employee";
 import LoaderSpinner from "../../loader/LoaderSpinner";
 
-// TODO: Mettre le systeme de loading
-
 interface Props {
   handleClose: React.Dispatch<React.SetStateAction<boolean>>;
   id: string;

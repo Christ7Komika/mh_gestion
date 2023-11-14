@@ -3,7 +3,7 @@ import prisma from "@/lib/prisma";
 import { PostEmployee } from "@/types/api/employee";
 import { join } from "path";
 import { existsSync, unlinkSync } from "fs";
-import { host } from "@/lib/host";
+import { uploadPath } from "@/lib/host";
 
 interface RouteProps {
   params: { id: string };
@@ -62,7 +62,7 @@ export async function DELETE(req: Request, { params: { id } }: RouteProps) {
     });
 
     if (data.profil) {
-      const path = join(process.cwd(), "public", "upload", data.profil);
+      const path = join(uploadPath, data.profil);
       if (existsSync(path)) {
         unlinkSync(path);
       }

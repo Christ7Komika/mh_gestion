@@ -26,7 +26,10 @@ const AddContractModal = ({ handleClose }: Props) => {
   const { data, isLoading } = useSWR<EmployeeName>(`${host}/employee`, fetcher);
   const [nameList, setNameList] = useState<string[]>([]);
   const [id, setId] = useState<string>("");
-  const { data: contracts, mutate } = useSWR<GetContracts>(`${host}/contract`);
+  const { data: contracts, mutate } = useSWR<GetContracts>(
+    `${host}/contract`,
+    fetcher
+  );
 
   useEffect(() => {
     if (data)

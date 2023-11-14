@@ -4,6 +4,7 @@ import { PostContract } from "@/types/api/contract";
 import { existsSync, mkdirSync, unlinkSync, writeFileSync } from "fs";
 import { NextResponse } from "next/server";
 import { join } from "path";
+import { uploadPath } from "@/lib/host";
 
 const Contracts = {
   id: true,
@@ -58,7 +59,7 @@ export async function POST(req: Request) {
   }
 
   const buffer = Buffer.from(await file.arrayBuffer());
-  const path = join(process.cwd(), "public", "upload");
+  const path = join(uploadPath);
   if (!existsSync(path)) {
     mkdirSync(path);
   }
@@ -110,7 +111,7 @@ export async function POST(req: Request) {
       status: 200,
     });
   } catch (err) {
-    unlinkSync(join(process.cwd(), "public", "upload", file.name));
+    unlinkSync(join(uploadPath, file.name));
     return NextResponse.json({
       message: "La requête a échoué",
       status: 400,

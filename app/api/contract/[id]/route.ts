@@ -4,6 +4,7 @@ import prisma from "@/lib/prisma";
 import { join } from "path";
 import { existsSync, unlinkSync, writeFileSync } from "fs";
 import { restDate } from "@/lib/helpers";
+import { uploadPath } from "@/lib/host";
 
 interface RouteProps {
   params: { id: string };
@@ -32,11 +33,11 @@ export async function PUT(req: NextRequest, { params: { id } }: RouteProps) {
 
   const file = formData.get("file") as File | null;
   if (file) {
-    const path = join(process.cwd(), "public", "upload", contract.file);
+    const path = join(uploadPath, contract.file);
     if (existsSync(path)) {
       unlinkSync(path);
       const buffer = Buffer.from(await file.arrayBuffer());
-      writeFileSync(join(process.cwd(), "public", "upload", file.name), buffer);
+      writeFileSync(join(uploadPath, file.name), buffer);
       data.file = file.name;
     }
   }
@@ -95,7 +96,7 @@ export async function DELETE(req: NextRequest, { params: { id } }: RouteProps) {
       where: { id: id },
     });
     if (contract.file) {
-      const path = join(process.cwd(), "public", "upload", contract.file);
+      const path = join(uploadPath, contract.file);
       if (existsSync(path)) {
         unlinkSync(path);
       }

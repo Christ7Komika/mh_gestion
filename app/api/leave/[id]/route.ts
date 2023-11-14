@@ -1,4 +1,5 @@
 import { restDate } from "@/lib/helpers";
+import { uploadPath } from "@/lib/host";
 import { existsSync, mkdirSync, unlinkSync, writeFileSync } from "fs";
 import { NextResponse, type NextRequest } from "next/server";
 import { join } from "path";
@@ -42,11 +43,11 @@ export async function PUT(req: NextRequest, { params: { id } }: RouteProps) {
 
   if (file) {
     if (oldLeave?.file) {
-      const path = join(process.cwd(), "public", "upload", oldLeave?.file);
+      const path = join(uploadPath, oldLeave?.file);
       unlinkSync(path);
     }
     const buffer = Buffer.from(await file.arrayBuffer());
-    const path = join(process.cwd(), "public", "upload");
+    const path = join(uploadPath);
     if (!existsSync(path)) {
       mkdirSync(path);
     }
@@ -94,13 +95,8 @@ export async function DELETE(req: NextRequest, { params: { id } }: RouteProps) {
       where: { id },
     });
 
-    console.log({
-      id,
-      leave,
-    });
-
     if (leave.file) {
-      const path = join(process.cwd(), "public", "upload", leave.file);
+      const path = join(uploadPath, leave.file);
       if (existsSync(path)) {
         unlinkSync(path);
       }
@@ -110,7 +106,6 @@ export async function DELETE(req: NextRequest, { params: { id } }: RouteProps) {
       status: 200,
     });
   } catch (err) {
-    console.log(err);
     return NextResponse.json({
       message: "La requête à échoué",
       status: 400,

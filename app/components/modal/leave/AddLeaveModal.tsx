@@ -27,7 +27,7 @@ const AddLeaveModal = ({ handleClose }: Props) => {
   const { data, isLoading } = useSWR<EmployeeName>(`${host}/employee`, fetcher);
   const [nameList, setNameList] = useState<string[]>([]);
   const [id, setId] = useState<string>("");
-  const { data: leaves, mutate } = useSWR<GetLeave>(`${host}/leave`);
+  const { data: leaves, mutate } = useSWR<GetLeave>(`${host}/leave`, fetcher);
 
   useEffect(() => {
     if (data)

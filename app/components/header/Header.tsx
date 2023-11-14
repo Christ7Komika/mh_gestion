@@ -1,18 +1,19 @@
-import { CgLogOut } from "react-icons/cg";
+import Logout from "../actionButton/Logout";
+import { cut } from "@/helpers/helpers";
+import { cookies } from "next/headers";
 
 const Header = async () => {
+  const cookieStore = cookies();
+  const username = cookieStore.get("username")?.value || "Utilisateur";
   return (
     <div className="flex gap-2 relative z-full">
       <h1 className="p-2 bg-amber-500 text-blue-700 w-20 h-full flex justify-center items-center fnt-bold text-3xl rounded">
         MH
       </h1>
       <div className="flex flex-col gap-0.5">
-        <h2 className="font-bold">KOMIKA Christ...</h2>
-        <p className="text-sm">Information</p>
+        <h2 className="font-bold">{cut(username, 20)}</h2>
         <div className="flex items-end h-8 gap-2">
-          <button className="bg-red-500 text-white h-full w-12 rounded flex justify-center items-center">
-            <CgLogOut size={20} />
-          </button>
+          <Logout />
         </div>
       </div>
     </div>

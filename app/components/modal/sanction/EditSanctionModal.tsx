@@ -58,11 +58,6 @@ const EditSectionModal = ({ handleClose, idSanction }: Props) => {
       ]);
   }, [data]);
 
-  console.log({
-    startDate: startDate,
-    endDate: endDate,
-  });
-
   useEffect(() => {
     if (sanction && data) {
       const res = data?.employees.find(

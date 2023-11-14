@@ -1,12 +1,53 @@
 "use client";
-import Link from "next/link";
 import { useState } from "react";
 import { RxEyeOpen, RxEyeNone } from "react-icons/rx";
+import toast, { Toaster } from "react-hot-toast";
+import { host } from "@/lib/host";
+import { useRouter } from "next/navigation";
+import LoaderSpinner from "./components/loader/LoaderSpinner";
 
 export default function Home() {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [show, setShow] = useState<boolean>(false);
+  const [isLoad, setIsLoad] = useState<boolean>(false);
+  const route = useRouter();
+
+  const handleLogin = async (e: React.SyntheticEvent) => {
+    e.preventDefault();
+    if (!username || !password) {
+      return toast.error("Veuillez remplir tous les champs");
+    }
+    setIsLoad(true);
+    const res = await fetch(`${host}/user/login`, {
+      method: "POST",
+      body: JSON.stringify({
+        username,
+        password,
+      }),
+      redirect: "follow",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    if (res.ok) {
+      const user = await res.json();
+      localStorage.setItem("isAuth", "1");
+      localStorage.setItem("role", user.role);
+      localStorage.setItem("username", user.username);
+
+      route.push("/dashboard/employee");
+      setIsLoad(false);
+      return;
+    }
+
+    toast.error("Vos identifiants sont invalides");
+    setIsLoad(false);
+    return;
+  };
   return (
     <main className="h-screen flex flex-col justify-center items-center gap-4 p-4">
+      <Toaster />
       <h1 className="bg-amber-500 p-5 text-blue-900 text-5xl font-bold">MH</h1>
       <p className="w-72 text-center">
         Connectez afin de pouvoir débuter votre travail
@@ -19,6 +60,8 @@ export default function Home() {
           <input
             type="text"
             id="user"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
             className="w-full border border-slate-200 h-9 rounded pl-2 text-sm outline-slate-200 outline-4"
           />
         </div>
@@ -29,6 +72,8 @@ export default function Home() {
           <div className="relative w-full">
             <input
               type={show ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
               id="password"
               className="w-full border border-slate-200 h-9 rounded pl-2 text-sm outline-slate-200 outline-4"
             />
@@ -40,19 +85,13 @@ export default function Home() {
             </span>
           </div>
         </div>
-        <Link
+        <button
           className="w-full h-11 rounded color-blue mt-2 text-white cursor-pointer flex justify-center items-center"
-          href="/dashboard/employee"
+          onClick={handleLogin}
         >
-          Se connecter
-        </Link>
+          {isLoad ? <LoaderSpinner w={15} h={15} /> : "Se connecter"}
+        </button>
       </form>
-      <div className="flex justify-between items-center p-4 gap-2 w-96 custum-shadow rounded-lg bg-white">
-        <p className="text-red-400 text-sm">
-          Oups !!! Vos identifiants sont invalides
-        </p>
-        <span className="w-3 h-3 rounded-full bg-red-500 cursor-pointer" />
-      </div>
     </main>
   );
 }

@@ -1,3 +1,4 @@
+import { uploadPath } from "@/lib/host";
 import prisma from "@/lib/prisma";
 import { tr } from "date-fns/locale";
 import { existsSync, unlinkSync, writeFileSync } from "fs";
@@ -16,7 +17,7 @@ export async function PUT(req: Request, { params: { id } }: RouteProps) {
   const profil = data.get("profil") as File | null;
 
   if (employee?.profil) {
-    const path = join(process.cwd(), "public", "upload", employee.profil);
+    const path = join(uploadPath, employee.profil);
     if (existsSync(path)) {
       unlinkSync(path);
     }
@@ -24,10 +25,7 @@ export async function PUT(req: Request, { params: { id } }: RouteProps) {
   try {
     if (profil) {
       const buffer = Buffer.from(await profil.arrayBuffer());
-      writeFileSync(
-        join(process.cwd(), "public", "upload", profil.name),
-        buffer
-      );
+      writeFileSync(join(uploadPath, profil.name), buffer);
       await prisma.employee.update({
         where: { id },
         data: { profil: profil.name },
