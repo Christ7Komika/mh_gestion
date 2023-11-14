@@ -1,7 +1,7 @@
 @echo off
 
 rem Start program
-start cmd /k "npx next start"
+start cmd /k "npm start"
 echo Wait to start the program
 timeout /t 5
 
