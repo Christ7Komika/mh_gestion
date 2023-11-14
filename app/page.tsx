@@ -35,7 +35,7 @@ export default function Home() {
       localStorage.setItem("isAuth", "1");
       localStorage.setItem("role", user.role);
       localStorage.setItem("username", user.username);
-
+      toast.success("Vous allez être redirigé dans quelque instant");
       route.push("/dashboard/employee");
       setIsLoad(false);
       return;

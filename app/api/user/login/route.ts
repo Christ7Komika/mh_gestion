@@ -41,9 +41,9 @@ export async function POST(req: Request) {
   }
 
   const cookieStore = cookies();
-  cookieStore.set("isAuth", "1");
-  cookieStore.set("role", user.role);
-  cookieStore.set("username", user.username);
+  cookieStore.set(`${user.username}-isAuth`, "1");
+  cookieStore.set(`${user.username}-role`, user.role);
+  cookieStore.set(`${user.username}-username`, user.username);
   return NextResponse.json({
     username: user.username,
     role: user.role,

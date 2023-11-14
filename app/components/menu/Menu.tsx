@@ -52,11 +52,13 @@ const Menu = () => {
   const path = usePathname();
 
   useEffect(() => {
-    if (role === "ADMIN") {
-      setData([...datas]);
-    }
-    if (role === "USER") {
-      setData([...datas.filter((url) => url.id !== 7)]);
+    if (role) {
+      if (role === "ADMIN") {
+        setData([...datas]);
+      }
+      if (role === "USER") {
+        setData([...datas.filter((url) => url.id !== 7)]);
+      }
     }
   }, [role]);
   return (
