@@ -6,46 +6,41 @@ import prisma from "@/lib/prisma";
 export async function POST(req: Request) {
   const { username, password } = await req.json();
 
-  if (!username) {
-    return NextResponse.json({
-      message: "Veuillez inserer le nom de l'utilisateur",
-      status: 400,
+  if (password && username) {
+    const user = await prisma.user.findUnique({
+      where: {
+        username,
+      },
     });
-  }
-  if (!password) {
-    return NextResponse.json({
-      message: "Veuillez inserer le mot de passe de l'utilisateur",
-      status: 400,
-    });
-  }
 
-  const user = await prisma.user.findUnique({
-    where: {
-      username,
-    },
-  });
+    if (user) {
+      const isValid = bcrypt.compareSync(password, user.password);
+      if (isValid) {
+        const cookieStore = cookies();
+        cookieStore.set(`${user.username}-isAuth`, "1");
+        cookieStore.set(`${user.username}-role`, user.role);
+        cookieStore.set(`${user.username}-username`, user.username);
 
-  if (!user) {
-    return NextResponse.json({
-      message: "Identifiants invalides",
+        return new Response(
+          JSON.stringify({
+            username: user.username,
+            role: user.role,
+          }),
+          {
+            status: 200,
+          }
+        );
+      }
+      return new Response("Identifiants invalides", {
+        status: 404,
+      });
+    }
+    return new Response("Identifiants invalides", {
       status: 404,
     });
   }
 
-  const isValid = bcrypt.compareSync(password, user.password);
-  if (!isValid) {
-    return NextResponse.json({
-      message: "Identifiants invalides",
-      status: 404,
-    });
-  }
-
-  const cookieStore = cookies();
-  cookieStore.set(`${user.username}-isAuth`, "1");
-  cookieStore.set(`${user.username}-role`, user.role);
-  cookieStore.set(`${user.username}-username`, user.username);
-  return NextResponse.json({
-    username: user.username,
-    role: user.role,
+  return new Response("Veuillez remplir tous les champs", {
+    status: 404,
   });
 }

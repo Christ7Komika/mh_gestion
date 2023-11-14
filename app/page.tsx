@@ -5,7 +5,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { host } from "@/lib/host";
 import { useRouter } from "next/navigation";
 import LoaderSpinner from "./components/loader/LoaderSpinner";
-
+import Cookies from "js-cookie";
 export default function Home() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -32,10 +32,21 @@ export default function Home() {
     });
     if (res.ok) {
       const user = await res.json();
-      localStorage.setItem("isAuth", "1");
-      localStorage.setItem("role", user.role);
-      localStorage.setItem("username", user.username);
+
+      console.log({ user });
+
+      Cookies.set("isAuth", "1");
+      Cookies.set("role", user.role);
+      Cookies.set("username", user.username);
       toast.success("Vous allez être redirigé dans quelque instant");
+      console.log({
+        username: user.username,
+        role: user.role,
+      });
+      console.log({
+        username1: Cookies.get("username"),
+      });
+
       route.push("/dashboard/employee");
       setIsLoad(false);
       return;

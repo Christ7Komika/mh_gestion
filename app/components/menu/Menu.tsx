@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import Cookies from "js-cookie";
 
 const Menu = () => {
   const [datas, setData] = useState([
@@ -48,7 +49,7 @@ const Menu = () => {
       secure: false,
     },
   ]);
-  const role = localStorage.getItem("role");
+  const role = Cookies.get("role");
   const path = usePathname();
 
   useEffect(() => {

@@ -1,8 +1,10 @@
+"use client";
 import Logout from "../actionButton/Logout";
 import { cut } from "@/helpers/helpers";
+import Cookies from "js-cookie";
 
 const Header = async () => {
-  const username = localStorage.getItem("username") || "Utilisateur";
+  const username = Cookies.get("username") || "Utilisateur";
   return (
     <div className="flex gap-2 relative z-full">
       <h1 className="p-2 bg-amber-500 text-blue-700 w-20 h-full flex justify-center items-center fnt-bold text-3xl rounded">

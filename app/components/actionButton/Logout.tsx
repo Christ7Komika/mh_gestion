@@ -1,22 +1,31 @@
 "use client";
+
 import { CgLogOut } from "react-icons/cg";
-import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import LoaderSpinner from "../loader/LoaderSpinner";
+import { host } from "@/lib/host";
+import Cookies from "js-cookie";
+
 const Logout = () => {
   const [isLoad, setIsLoad] = useState(false);
+  const username = Cookies.get("username");
   const route = useRouter();
-  const signOut = (e: React.SyntheticEvent) => {
+  const signOut = async (e: React.SyntheticEvent) => {
     e.preventDefault();
     setIsLoad(true);
-    Cookies.remove("isAuth");
-    Cookies.remove("role");
-    Cookies.remove("username");
-    localStorage.removeItem("isAuth");
-    localStorage.removeItem("role");
-    localStorage.removeItem("username");
-    route.push("/");
+    const res = await fetch(`${host}/user/logout/${username}`, {
+      method: "GET",
+      redirect: "follow",
+    });
+    if (res.ok) {
+      Cookies.remove("isAuth");
+      Cookies.remove("role");
+      Cookies.remove("username");
+      route.push("/");
+      setIsLoad(false);
+      return;
+    }
     setIsLoad(false);
     return;
   };
