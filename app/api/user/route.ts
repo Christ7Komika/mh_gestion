@@ -5,7 +5,8 @@ import env from "@/env";
 import prisma from "@/lib/prisma";
 
 export async function GET() {
-  return NextResponse.json(await prisma.user.findMany());
+  const user = await prisma.user.findMany();
+  return NextResponse.json(user);
 }
 
 export async function POST(req: Request) {
